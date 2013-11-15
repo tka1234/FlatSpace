@@ -1,0 +1,331 @@
+Êþº¾   2°  StdDraw  java/lang/Object  java/awt/event/ActionListener  java/awt/event/MouseListener 
+ "java/awt/event/MouseMotionListener  java/awt/event/KeyListener BLACK Ljava/awt/Color; BLUE CYAN 	DARK_GRAY GRAY GREEN 
+LIGHT_GRAY MAGENTA ORANGE PINK RED WHITE YELLOW 	BOOK_BLUE BOOK_LIGHT_BLUE BOOK_RED DEFAULT_PEN_COLOR DEFAULT_CLEAR_COLOR penColor DEFAULT_SIZE I 
+ConstantValue    width height DEFAULT_PEN_RADIUS D?`bMÒñ©ü 	penRadius defer Z BORDER?©™™™™™š DEFAULT_XMIN         DEFAULT_XMAX?ð       DEFAULT_YMIN DEFAULT_YMAX xmin ymin xmax ymax 	mouseLock Ljava/lang/Object; keyLock DEFAULT_FONT Ljava/awt/Font; font offscreenImage Ljava/awt/image/BufferedImage; 
+onscreenImage 	offscreen Ljava/awt/Graphics2D; onscreen std 	LStdDraw; frame Ljavax/swing/JFrame; mousePressed mouseX mouseY 	keysTyped Ljava/util/LinkedList; 	Signature -Ljava/util/LinkedList<Ljava/lang/Character;>; keysDown Ljava/util/TreeSet; (Ljava/util/TreeSet<Ljava/lang/Integer;>; <clinit> ()V Code	 [ ] \ java/awt/Color 
+ 	  ]	 [ `  	  `	 [ c  	  c	 [ f  	  f	 [ i  	  i	 [ l  	  l	 [ o  	  o	 [ r  	  r	 [ u  	  u	 [ x  	  x	 [ {  	  {	 [ ~  	  ~	 [   	  
+ [ „ … † <init> (III)V	  ˆ  	  Š  	  Œ  	  Ž  	    	  ’ % "	  ” & "	  – , -
+  ˜ … X	  š = >	  œ ? > ž 
+java/awt/Font   	SansSerif
+  ¢ … £ (Ljava/lang/String;II)V	  ¥ @ A
+  ˜	  ¨ I J	  ª M -	  ¬ N (	  ® O ( ° java/util/LinkedList
+ ¯ ˜	  ³ P Q µ java/util/TreeSet
+ ´ ˜	  ¸ T U
+  º » X init LineNumberTable LocalVariableTable this 
+setCanvasSize
+  Á ¿ Â (II)V Ä "java/lang/IllegalArgumentException Æ !width and height must be positive
+ Ã È … É (Ljava/lang/String;)V w h 
+StackMapTable	  Î K L
+ Ð Ò Ñ javax/swing/JFrame Ó Ô 
+setVisible (Z)V
+ Ð ˜ × java/awt/image/BufferedImage
+ Ö „	  Ú C D	  Ü E D
+ Ö Þ ß à createGraphics ()Ljava/awt/Graphics2D;	  â F G	  ä H G
+  æ ç X 	setXscale
+  é ê X 	setYscale
+ ì î í java/awt/Graphics2D ï ð setColor (Ljava/awt/Color;)V
+ ì ò ó ô fillRect (IIII)V
+  ö ÷ X setPenColor
+  ù ú X setPenRadius
+  ü ý X setFont
+  ÿ  X clear java/awt/RenderingHints	 KEY_ANTIALIASING Ljava/awt/RenderingHints$Key;		 > VALUE_ANTIALIAS_ON
+ … 2(Ljava/awt/RenderingHints$Key;Ljava/lang/Object;)V	 
+KEY_RENDERING	 > VALUE_RENDER_QUALITY
+ put 8(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ ì addRenderingHints (Ljava/util/Map;)V javax/swing/ImageIcon
+ … (Ljava/awt/Image;)V! javax/swing/JLabel
+ # …$ (Ljavax/swing/Icon;)V
+ &'( addMouseListener !(Ljava/awt/event/MouseListener;)V
+ *+, addMouseMotionListener '(Ljava/awt/event/MouseMotionListener;)V
+ Ð./0 setContentPane (Ljava/awt/Container;)V
+ Ð234 addKeyListener (Ljava/awt/event/KeyListener;)V
+ Ð67 Ô setResizable
+ Ð9:; setDefaultCloseOperation (I)V= 
+Standard Draw
+ Ð?@ É setTitle
+ BCD 
+createMenuBar ()Ljavax/swing/JMenuBar;
+ ÐFGH setJMenuBar (Ljavax/swing/JMenuBar;)V
+ ÐJK X pack
+ ÐMNO requestFocusInWindow ()Z hints Ljava/awt/RenderingHints; icon Ljavax/swing/ImageIcon; draw Ljavax/swing/JLabel;W javax/swing/JMenuBar
+V ˜Z javax/swing/JMenu\ File
+Y È
+V_`a add ((Ljavax/swing/JMenu;)Ljavax/swing/JMenu;c javax/swing/JMenuIteme  Save...   
+b È
+bhij addActionListener "(Ljava/awt/event/ActionListener;)V
+lnm java/awt/Toolkitop getDefaultToolkit ()Ljava/awt/Toolkit;
+lrst getMenuShortcutKeyMask ()I
+vxw javax/swing/KeyStrokeyz getKeyStroke (II)Ljavax/swing/KeyStroke;
+b|}~ setAccelerator (Ljavax/swing/KeyStroke;)V
+Y€` 0(Ljavax/swing/JMenuItem;)Ljavax/swing/JMenuItem; menuBar Ljavax/swing/JMenuBar; menu Ljavax/swing/JMenu; 	menuItem1 Ljavax/swing/JMenuItem;
+ ‰ çŠ (DD)V
+ Œ êŠ	 Ž 9 (	  ; ( min max size• java/lang/Throwable	 — : (	 ™ < ( setScale scaleX (D)D x scaleY y factorX
+¢¤£ java/lang/Math¥œ abs factorY userX userY
+ ª  ð	 ¬   
+ ®T X color getPenRadius ()D	 ³ + (
+ µ ú¶ (D)V¸ pen radius must be nonnegative@€      ¼ java/awt/BasicStroke
+»¾ …¿ (FII)V
+ ìÁÂÃ 	setStroke (Ljava/awt/Stroke;)V r scaledPenRadius F stroke Ljava/awt/BasicStroke; getPenColor ()Ljava/awt/Color;
+ Ì ÷ ðÎ 'amount of red must be between 0 and 255 red green blue getFont ()Ljava/awt/Font;	 Õ B A
+ × ýØ (Ljava/awt/Font;)V f line (DDDD)VÝ java/awt/geom/Line2D$Double
+ ß›œ
+ ážœ
+Üã …Û
+ ìåTæ (Ljava/awt/Shape;)V x0 y0 x1 y1 pixel
+¢íîï round (D)J point
+ òëŠô java/awt/geom/Ellipse2D$Double
+óã
+ ì÷øæ fill xs ys circle (DDD)Vþ !circle radius must be nonnegative@       
+  œ
+ ¦œ ws hs filledCircle ellipse
+ *ellipse semimajor axis must be nonnegative *ellipse semiminor axis must be nonnegative 
+semiMajorAxis 
+semiMinorAxis 
+filledEllipse arc (DDDDD)V arc radius must be nonnegative@v€      java/awt/geom/Arc2D$Double
+ … 
+(DDDDDDI)V angle1 angle2 square &square side length must be nonnegative!  java/awt/geom/Rectangle2D$Double
+ ã filledSquare 	rectangle& half width must be nonnegative( half height must be nonnegative 	halfWidth 
+halfHeight filledRectangle polygon ([D[D)V/ java/awt/geom/GeneralPath
+. ˜
+.234 moveTo (FF)V
+.674 lineTo
+.9: X 	closePath [D N path Ljava/awt/geom/GeneralPath; i 
+filledPolygon getImage $(Ljava/lang/String;)Ljava/awt/Image;
+ È
+EFt getImageLoadStatusH java/net/URL
+G È
+K …L (Ljava/net/URL;)V
+NPO java/lang/ClassQR getResource "(Ljava/lang/String;)Ljava/net/URL;T java/lang/StringBuilderV image 
+S È
+SYZ[ append -(Ljava/lang/String;)Ljava/lang/StringBuilder;] 
+ not found
+S_`a toString ()Ljava/lang/String;
+cAd ()Ljava/awt/Image;f java/lang/Exception filename Ljava/lang/String; url Ljava/net/URL; picture (DDLjava/lang/String;)V
+ nAB
+prq java/awt/Imagest getWidth !(Ljava/awt/image/ImageObserver;)I
+pvwt 	getHeighty  is corrupt
+ ì{|} 	drawImage 3(Ljava/awt/Image;IILjava/awt/image/ImageObserver;)Z s image Ljava/awt/Image;‚ java/lang/String (DDLjava/lang/String;D)V
+¢…†œ 	toRadians
+ ìˆ‰ü rotate degrees (DDLjava/lang/String;DD)V width is negative: 
+SZ (D)Ljava/lang/StringBuilder;’ height is negative: 
+ ì”|• 5(Ljava/awt/Image;IIIILjava/awt/image/ImageObserver;)Z (DDLjava/lang/String;DDD)V text
+ ì×
+ ìš›œ getFontMetrics ()Ljava/awt/FontMetrics;
+ž Ÿ java/awt/FontMetrics¡¢ stringWidth (Ljava/lang/String;)I
+ž¤¥t 
+getDescent
+ ì§¨© 
+drawString (Ljava/lang/String;FF)V metrics Ljava/awt/FontMetrics;
+ ­—l textLeft 	textRight show
+²´³ java/lang/Threadµ¶ sleep (J)V	¸º¹ java/lang/System»¼ out Ljava/io/PrintStream;¾ Error sleeping
+ÀÂÁ java/io/PrintStreamÃ É printlnÅ java/lang/InterruptedException t e  Ljava/lang/InterruptedException;
+ ÐÊË X repaint saveÎ java/io/File
+Í È
+ÑÒÓ lastIndexOf (I)I
+ÕÖ× 	substring (I)Ljava/lang/String;
+ÙÚa toLowerCaseÜ png
+Þßà equals (Ljava/lang/Object;)Z
+âäã javax/imageio/ImageIOåæ write A(Ljava/awt/image/RenderedImage;Ljava/lang/String;Ljava/io/File;)Z
+èêé java/io/IOExceptionë X printStackTraceí jpg
+ Öïðñ 	getRaster !()Ljava/awt/image/WritableRaster;
+óõô java/awt/image/WritableRasterö÷ createWritableChild )(IIIIII[I)Ljava/awt/image/WritableRaster;
+ Öùúû 
+getColorModel ()Ljava/awt/image/ColorModel;ý java/awt/image/DirectColorModel
+üÿ t getPixelSize
+üt 
+getRedMask
+üt getGreenMask
+ü	t getBlueMask
+ü … ô
+ Ö
+ … S(Ljava/awt/image/ColorModel;Ljava/awt/image/WritableRaster;ZLjava/util/Hashtable;)V Invalid image file type:  file Ljava/io/File; suffix Ljava/io/IOException; raster Ljava/awt/image/WritableRaster; 	newRaster cm !Ljava/awt/image/DirectColorModel; newCM 	rgbBuffer actionPerformed (Ljava/awt/event/ActionEvent;)V java/awt/FileDialog! Use a .png or .jpg extension
+# …$ &(Ljava/awt/Frame;Ljava/lang/String;I)V
+ Ò
+'(a getFile
+*+a getDirectory
+-./ valueOf &(Ljava/lang/Object;)Ljava/lang/String;	Í12h 	separator
+ 4Ì É Ljava/awt/event/ActionEvent; chooser Ljava/awt/FileDialog; mouseClicked (Ljava/awt/event/MouseEvent;)V Ljava/awt/event/MouseEvent; mouseEntered mouseExited
+>@? java/awt/event/MouseEventAt getX
+ C§œ
+>EFt getY
+ H¨œ 
+mouseReleased mouseDragged 
+mouseMoved hasNextKeyTyped
+ ¯NOO isEmpty nextKeyTyped ()C
+ ¯STU 
+removeLast ()Ljava/lang/Object;W java/lang/Character
+VYZQ 	charValue isKeyPressed (I)Z
+^`_ java/lang/Integer.a (I)Ljava/lang/Integer;
+ ´cdà contains keycode keyTyped (Ljava/awt/event/KeyEvent;)V
+ikj java/awt/event/KeyEventlQ 
+getKeyChar
+Vn.o (C)Ljava/lang/Character;
+ ¯qrs addFirst (Ljava/lang/Object;)V Ljava/awt/event/KeyEvent; 
+keyPressed
+iwxt 
+getKeyCode
+ ´z`à keyReleased
+ ´}~à remove main ([Ljava/lang/String;)V?É™™™™™š?é™™™™™š?¹™™™™™š
+ ˆü
+ Š#ü
+ Œûü?”záG®{@i      @F€     
+ ”?Ó333333
+ ˜@-?à      œ 
+black textž 
+white text args [Ljava/lang/String; 
+SourceFile StdDraw.java InnerClasses¥ java/awt/RenderingHints$Key Key¨ java/awt/geom/Arc2D Double« java/awt/geom/Ellipse2D­ java/awt/geom/Line2D¯ java/awt/geom/Rectangle2D 1      	  1  
+                                                                                         
+       ! "  #    $ 
+ % "   
+ & "    ' (  #    ) 
+ + (   
+ , -    . (  #    /  1 (  #    2  4 (  #    5  7 (  #    2  8 (  #    5 
+ 9 (   
+ : (   
+ ; (   
+ < (   
+ = >   
+ ? >    @ A   
+ B A   
+ C D   
+ E D   
+ F G   
+ H G   
+ I J   
+ K L   
+ M -   
+ N (   
+ O (   
+ P Q  R    S 
+ T U  R    V J  W X  Y  ‡      ï² Z³ ^² _³ a² b³ d² e³ g² h³ j² k³ m² n³ p² q³ s² t³ v² w³ y² z³ |² }³ ² €³ ‚» [Y	Z ¦· ƒ³ ‡» [Yg Æ ó· ƒ³ ‰» [Y –#· ƒ³ ‹² ^³ ² ³  ³ ‘ ³ “³ •» Y· —³ ™» Y· —³ ›» YŸ· ¡³ ¤» Y· ¦³ §³ ©³ «³ ­» ¯Y· ±³ ²» ´Y· ¶³ ·¸ ¹±    ¼   ~               $  *  0  6  <  B  H  N ! _ " q ( ‚ + ˆ , Ž 3 ” 4 š = ž H ¨ I ² L Á V Ë \ Ï ] Ó ^ × a á d ë l ½       … X  Y   /     *· —±    ¼       h ½        ¾ J   	 ¿ X  Y   .      
+  ¸ À±    ¼   
+    r 	 s ½      	 ¿ Â  Y   n      ¡ ¢ 
+» ÃYÅ· Ç¿³ ‘³ “¸ ¹±    ¼       }  ~    €   ½         Ê "       Ë "  Ì    
+	 
+ » X  Y  Â     û² ÍÆ 
+² Í¶ Ï» ÐY· Õ³ Í» ÖY² ‘² “· Ø³ Ù» ÖY² ‘² “· Ø³ Û² Ù¶ Ý³ á² Û¶ Ý³ ã¸ å¸ è² á² ¶ ë² á² ‘² “¶ ñ¸ õ¸ ø¸ û¸ þ»Y²²·
+K*²
+²¶W² á*¶»Y² Û·L» Y+·"M,² §¶%,² §¶)² Í,¶-² Í² §¶1² Í¶5² Í¶8² Í<¶>² Í¸A¶E² Í¶I² Í¶LW² Í¶ Ï±    ¼   † !   … 
+ †  ‡ ( ˆ 9 ‰ B Š K ‹ N Œ Q  Z Ž h  k  n ‘ q ’ t • { – ~ • ‚ —  ˜ ” › Ÿ œ ¨ ž ¯ Ÿ ¶ ¡ ½ ¢ Æ £ Í ¤ Ô ¦ Ý § æ ¨ ì © ó ª ú « ½      ‚ yPQ   Ÿ \RS  ¨ STU  Ì    
+ 
+CD  Y   ¤     B»VY·XK»YY[·]L*+¶^W»bYd·fM,² §¶g,S¸k¶q¸u¶{+,¶W*°    ¼   * 
+   ¯  °  ±  ² $ ³ + ´ . µ 4 ´ : ¶ @ · ½       :‚ƒ    /„…  $ †‡  	 ç X  Y   &      ¸ˆ±    ¼       Â ½      	 ê X  Y   &      ¸‹±    ¼       Ç ½      	 çŠ  Y   ª     -(&g9² ™Y:Â& /kg³( /kc³Ã§ Ã¿±   % (   ( + (    ¼       Ï  Ð  Ñ  Ò " Ð , Ô ½        -‘ (     -’ (   (“ (  Ì    ÿ (   ”ú  	 êŠ  Y   ª     -(&g9² ™Y:Â& /kg³–( /kc³˜Ã§ Ã¿±   % (   ( + (    ¼       Ü  Ý  Þ  ß " Ý , á ½        -‘ (     -’ (   (“ (  Ì    ÿ (   ”ú  	šŠ  Y   È     C(&g9² ™Y:Â& /kg³( /kc³& /kg³–( /kc³˜Ã§ Ã¿±   ; >   > A >    ¼   "    é  ê  ë  ì " í - î 8 ê B ð ½        C‘ (     C’ (   >“ (  Ì    ÿ >   ”ú  
+›œ  Y   =     ² ‘‡&²gk²²go¯    ¼       ó ½        (   
+žœ  Y   =     ² “‡²˜&gk²˜²–go¯    ¼       ô ½       Ÿ (   
+ œ  Y   <     &² ‘‡k²²g¸¡o¯    ¼       õ ½        Ê (   
+¦œ  Y   <     &² “‡k²˜²–g¸¡o¯    ¼       ö ½        Ë (   
+§œ  Y   =     ²&²²gk² ‘‡oc¯    ¼       ÷ ½        (   
+¨œ  Y   =     ²˜&²˜²–gk² “‡og¯    ¼       ø ½       Ÿ (   	  X  Y   '      ² ¸©±    ¼       þ ½      	  ð  Y   \     "² á*¶ ë² á² ‘² “¶ ñ² á²«¶ ë¸­±    ¼          ! ½       "¯    	°±  Y   $      ²²¯    ¼      
+ ½      	 ú X  Y   '       )¸´±    ¼       ½      	 ú¶  Y   Š     /&˜œ » ÃY·· Ç¿&³²&¹kE»»Y$·½N² á-¶À±    ¼          ' . ½        /Ä (    ÅÆ  ' ÇÈ  Ì     	ÉÊ  Y   $      ²«°    ¼      $ ½      	 ÷ X  Y   '      ² ¸Ë±    ¼      ) ½      	 ÷ ð  Y   @     *³«² á²«¶ ë±    ¼      2 3 
+4 ½       ¯    	 ÷ †  Y   ¬     P› 
+ ¡ » ÃYÍ· Ç¿› 
+ ¡ » ÃYÍ· Ç¿› 
+ ¡ » ÃYÍ· Ç¿» [Y· ƒ¸Ë±    ¼      > ? ,@ BA OB ½        PÏ "     PÐ "    PÑ "  Ì    
+
+
+
+
+ 	ÒÓ  Y   $      ²Ô°    ¼      G ½      	 ý X  Y   '      ² ¤¸Ö±    ¼      L ½      	 ýØ  Y   /     *³Ô±    ¼      R ½       Ù A   	ÚÛ  Y   s     #² á»ÜY&¸Þ(¸à¸Þ¸à·â¶ä¸­±    ¼      a b "c ½   *    #ç (     #è (    #é (    #ê (  
+ëŠ  Y   Q     ² á&¸Þ¸ìˆ(¸à¸ìˆ¶ ñ±    ¼   
+   k l ½        (     Ÿ (  	ðŠ  Y   æ     P&¸Þ9(¸à9²²9¹k8
+
+– &(¸ñ§ &² á»óY
+
+ng
+
+ng
+
+·õ¶ö¸­±    ¼   * 
+  t u v w | )} @~ I} L O€ ½   >    P (     PŸ (   Jù (   Dú (   ?Ä (   6ÅÆ 
+ Ì    ÿ )   " 	ûü  Y       q˜œ » ÃYý· Ç¿&¸Þ9(¸à9ÿk¸9
+ÿk¸9
+˜ ˜ &(¸ñ§ &² á»óY
+ÿogÿog
+·õ¶ä¸­±    ¼   & 	  Š ‹ Œ  )Ž 4 J m‘ p’ ½   H    q (     qŸ (    qÄ (   Yù (   Sú (  ) H ( 
+ 4 = (  Ì    ÿ 7   " 	ü  Y       q˜œ » ÃYý· Ç¿&¸Þ9(¸à9ÿk¸9
+ÿk¸9
+˜ ˜ &(¸ñ§ &² á»óY
+ÿogÿog
+·õ¶ö¸­±    ¼   & 	  œ  ž Ÿ )  4¡ J¢ m£ p¤ ½   H    q (     qŸ (    qÄ (   Yù (   Sú (  ) H ( 
+ 4 = (  Ì    ÿ 7   " 	Û  Y  1     ƒ˜œ » ÃY	· Ç¿˜œ » ÃY· Ç¿&¸Þ9(¸à9
+ÿk¸9ÿk¸9˜ ˜ &(¸ñ§ &² á»óYÿog
+ÿog·õ¶ä¸­±    ¼   * 
+  ° ± $² *³ 0´ ;µ F¶ \· ¸ ‚¹ ½   R    ƒ (     ƒŸ (    ƒ
+ (    ƒ (  * Yù (  0 Sú ( 
+ ; H (  F = (  Ì    ÿ 7   " 	Û  Y  1     ƒ˜œ » ÃY	· Ç¿˜œ » ÃY· Ç¿&¸Þ9(¸à9
+ÿk¸9ÿk¸9˜ ˜ &(¸ñ§ &² á»óYÿog
+ÿog·õ¶ö¸­±    ¼   * 
+  Ä Å $Æ *Ç 0È ;É FÊ \Ë Ì ‚Í ½   R    ƒ (     ƒŸ (    ƒ
+ (    ƒ (  * Yù (  0 Sú ( 
+ ; H (  F = (  Ì    ÿ 7   " 	  Y  B     ‰˜œ » ÃY· Ç¿c9˜›ÿó&¸Þ9
+(¸à9ÿk¸9ÿk¸9˜ ˜ &(¸ñ§ .² á»Y
+ÿogÿogg·¶ä¸­±    ¼   * 
+  Û Ü "Ý (Þ .ß 9à Dá Zâ …ã ˆä ½   \ 	   ‰ (     ‰Ÿ (    ‰Ä (    ‰ (    ‰ (  ( aù ( 
+ . [ú (  9 P (  D E (  Ì    ÿ ? 	  * 	ü  Y       q˜œ » ÃY· Ç¿&¸Þ9(¸à9ÿk¸9
+ÿk¸9
+˜ ˜ &(¸ñ§ &² á» Y
+ÿogÿog
+·"¶ä¸­±    ¼   & 	  î ï ð ñ )ò 4ó Jô mõ pö ½   H    q (     qŸ (    qÄ (   Yù (   Sú (  ) H ( 
+ 4 = (  Ì    ÿ 7   " 	#ü  Y       q˜œ » ÃY· Ç¿&¸Þ9(¸à9ÿk¸9
+ÿk¸9
+˜ ˜ &(¸ñ§ &² á» Y
+ÿogÿog
+·"¶ö¸­±    ¼   & 	       ) 4 J m p ½   H    q (     qŸ (    qÄ (   Yù (   Sú (  ) H ( 
+ 4 = (  Ì    ÿ 7   " 	$Û  Y  1     ƒ˜œ » ÃY%· Ç¿˜œ » ÃY'· Ç¿&¸Þ9(¸à9
+ÿk¸9ÿk¸9˜ ˜ &(¸ñ§ &² á» Yÿog
+ÿog·"¶ä¸­±    ¼   * 
+    $ * 0 ; F \  ‚ ½   R    ƒ (     ƒŸ (    ƒ) (    ƒ* (  * Yù (  0 Sú ( 
+ ; H (  F = (  Ì    ÿ 7   " 	+Û  Y  1     ƒ˜œ » ÃY%· Ç¿˜œ » ÃY'· Ç¿&¸Þ9(¸à9
+ÿk¸9ÿk¸9˜ ˜ &(¸ñ§ &² á» Yÿog
+ÿog·"¶ö¸­±    ¼   * 
+  ( ) $* *+ 0, ;- F. \/ 0 ‚1 ½   R    ƒ (     ƒŸ (    ƒ) (    ƒ* (  * Yù (  0 Sú ( 
+ ; H (  F = (  Ì    ÿ 7   " 	,-  Y   Ö     O*¾=».Y·0N-*1¸Þ+1¸à¶16§ -*1¸Þ+1¸à¶5„¡ÿæ-¶8² á-¶ä¸­±    ¼   * 
+  : ; < = #> 7= @? D@ KA NB ½   4    O;     OŸ;   L< "   D=>     ? "  Ì    þ #. 	@-  Y   Ö     O*¾=».Y·0N-*1¸Þ+1¸à¶16§ -*1¸Þ+1¸à¶5„¡ÿæ-¶8² á-¶ö¸­±    ¼   * 
+  J K L M #N 7M @O DP KQ NR ½   4    O;     OŸ;   L< "   D=>     ? "  Ì    þ #. 
+AB  Y       q»Y*·CL+Æ +¶DŸ »GY*·IM»Y,·JL§ M+Æ +¶DŸ 6*¶MM,Ç "» ÃY»SYU·W*¶X\¶X¶^· Ç¿»Y,·JL+¶b°   ( +e  ¼   * 
+  ^ 	a c d (e ,i 9j @k cl lo ½   *    qgh   	 hRS   	ij  @ ,ij  Ì    ü Te ü )Gú  	kl  Y  # 	    w¸m:&¸Þ9(¸à9¶o6
+¶u6
+› œ #» ÃY»SYU·W¶Xx¶X¶^· Ç¿² á
+‡ÿog¸ìˆ‡ÿog¸ìˆ¶zW¸­±    ¼   & 	  z { 
+| } ~ # M s‚ vƒ ½   R    w (     wŸ (    w~h   p€  
+ jù (   dú (   \ " 
+ # T "  Ì    ÿ - p   	kƒ  Y  U 	    –¸m:&¸Þ9(¸à9
+¶o6¶u6
+› 
+œ #» ÃY»SYU·W¶Xx¶X¶^· Ç¿² áw¸„
+¶‡² á‡ÿog¸ìˆ
+
+‡ÿog¸ìˆ¶zW² á¸„
+¶‡¸­±    ¼   .     
+‘ ’ “ #” M– ]— ƒ˜ ’š •› ½   \ 	   – (     –Ÿ (    –~h    –Š (   €  
+ ‰ù (   ƒú ( 
+  { "  # s " 
+ Ì    ÿ - 	p   	k‹  Y  ´ 	    Û¸m:	&¸Þ9
+(¸à9˜œ » ÃY»SYŒ·W¶Ž¶^· Ç¿˜œ » ÃY»SY‘·W¶Ž¶^· Ç¿¸9¸9˜› 
+˜œ #» ÃY»SYU·W¶Xx¶X¶^· Ç¿˜ ˜ &(¸ñ§ 3² á	
+ÿog¸ìˆÿog¸ìˆ¸ìˆ¸ìˆ¶“W¸­±    ¼   B   ¨ © 
+ª « 4¬ U­ \® c¯ ‘° §² ¹³ Æ´ Ìµ Ó² ×· Ú¸ ½   f 
+   Û (     ÛŸ (    Û~h    Û Ê (    Û Ë (   Ô€ 	 
+ Îù ( 
+  Èú (  \  (  c x (  Ì    þ 4p ý / 	k–  Y  Ÿ 	    µ¸m:&¸Þ9(¸à9¸9¸9˜› 
+˜œ #» ÃY»SYU·W¶Xx¶X¶^· Ç¿˜ ˜ &(¸ñ² á	w¸„¶‡² áÿog¸ìˆÿog¸ìˆ¸ìˆ¸ìˆ¶“W² á	¸„¶‡¸­±    ¼   B   Ç È 
+É Ê Ë !Ì OÍ bÏ rÐ „Ñ ‘Ò —Ó žÐ ¢Ô ±Ö ´× ½   p    µ (     µŸ (    µ~h    µ Ê (    µ Ë (    µŠ ( 	  ®€  
+ ¨ù (   ¢ú (   › (  ! ” (  Ì    ÿ / p   	—l  Y   Û     K² á²Ô¶˜² á¶™:&¸Þ9(¸à9¶6
+¶£6² á
+‡ÿog‡c¶¦¸­±    ¼   & 	  å 	æ ç è é &ê -ë Gì Jí ½   R    K (     KŸ (    K~h   :ª«   4ù (   .ú (  & % " 
+ -  "  	—ƒ  Y   £     3&¸Þ9(¸à9	² áw¸„	¶‡&(¸¬² á¸„	¶‡±    ¼      ø ù ú û #ü 2ý ½   >    3 (     3Ÿ (    3~h    3Š (   -ù (   'ú ( 	 	®l  Y   ¼     :² á²Ô¶˜² á¶™:&¸Þ9(¸à9¶£6
+² á
+‡c¶¦¸­±    ¼   "    	 	 
+  $ 6
+ 9 ½   H    : (     :Ÿ (    :~h   )ª«   #ù (   ú (  $  " 
+ 	¯l  Y   ×     G² á²Ô¶˜² á¶™:&¸Þ9(¸à9¶6
+¶£6² á
+‡g‡c¶¦¸­±    ¼   & 	   	    & - C F ½   R    G (     GŸ (    G~h   6ª«   0ù (   *ú (  & ! " 
+ -  "  	°;  Y   {     ³ •¸­…¸±§ 
+L²·½¶¿³ •±    Ä  ¼      0 1 2 3 4 5 ½       Æ "    	ÇÈ  Ì    OÄ	 	° X  Y   0      ³ •¸­±    ¼      > ? @ ½      
+T X  Y   P      ² •™ ±² ã² Ù¶zW² Í¶É±    ¼      D E F G ½      Ì     	Ì É  Y  ý  	   Ê»ÍY*·ÏL**.¶Ð`¶ÔM,¶ØÛ¶Ý™ ² Û,+¸áW§ N-¶ç§ •,¶Øì¶Ý™ q² Û¶îN-² ‘² “¼
+YOYO¶ò:² Û¶øÀü:»üY¶þ¶¶¶·
+:» ÖY·:,+¸áW§ $:¶ç§ ²·»SY·W,¶X¶^¶¿±  # , /è  ¥ ¨è  ¼   V   S 	T W #X /Y 4Z 7^ D_ Ka fb qc zd e „f ‰c Žg h ¨i ¯j ²m Éo ½   f 
+   Êgh   	 Á   ´h  0 Ç  K d  f I  q >  Ž !    D  ª Ç  Ì   I ÿ / Í èÿ p Íóóüü Ö èÿ 	 Í     Y   ¬     ?»Y² Í ·"M,¶%,¶&N-Æ $»SY,¶)¸,·W²0¶X,¶&¶X¶^¸3±    ¼      v w x y z >| ½   *    ? ¾ J     ?Ç5   067   &gh  Ì    ý > 	 MO  Y   \     ² ™YKÂ² ©*Ã¬*Ã¿             ¼      ˆ ‰ ˆ ½      Ì    ÿ    ” 	 N±  Y   \     ² ™YKÂ² «*Ã¯*Ã¿             ¼      ’ “ ’ ½      Ì    ÿ    ” 	 O±  Y   \     ² ™YKÂ² ­*Ã¯*Ã¿             ¼      œ  œ ½      Ì    ÿ    ” 89  Y   5      ±    ¼      ¥ ½        ¾ J     Ç:  ;9  Y   5      ±    ¼      ª ½        ¾ J     Ç:  <9  Y   5      ±    ¼      ¯ ½        ¾ J     Ç:   M9  Y   Ÿ     )² ™YMÂ+¶=‡¸B³ «+¶D‡¸G³ ­³ ©,Ã§ ,Ã¿±   " %   % ' %    ¼      µ ¶ · ¸  µ (º ½       ) ¾ J     )Ç:  Ì    ÿ %  >  ”ú  I9  Y        ² ™YMÂ³ ©,Ã§ ,Ã¿±             ¼      À Á 
+À Ã ½        ¾ J     Ç:  Ì    ÿ   >  ”ú  J9  Y   —     %² ™YMÂ+¶=‡¸B³ «+¶D‡¸G³ ­,Ã§ ,Ã¿±    !   ! # !    ¼      É Ê Ë É $Í ½       % ¾ J     %Ç:  Ì    ÿ !  >  ”ú  K9  Y   —     %² ™YMÂ+¶=‡¸B³ «+¶D‡¸G³ ­,Ã§ ,Ã¿±    !   ! # !    ¼      Ó Ô Õ Ó $× ½       % ¾ J     %Ç:  Ì    ÿ !  >  ”ú  	LO  Y   f     ² ›YKÂ² ²¶M™ § *Ã¬*Ã¿             ¼      ã ä ã ½      Ì    ü  @B” 	PQ  Y   e     ² ›YKÂ² ²¶RÀV¶X*Ã¬*Ã¿             ¼      ð ñ ð ½      Ì    ÿ    ” 	[\  Y   n     ² ›YLÂ² ·¸]¶b+Ã¬+Ã¿             ¼      þ ÿ þ ½       e "   Ì    ÿ    ” fg  Y   Š     ² ›YMÂ² ²+¶h¸m¶p,Ã§ ,Ã¿±             ¼       	   ½        ¾ J     Çt  Ì    ÿ   i  ”ú  ug  Y   ‹     ² ›YMÂ² ·+¶v¸]¶yW,Ã§ ,Ã¿±             ¼          ½        ¾ J     Çt  Ì    ÿ   i  ”ú  {g  Y   ‹     ² ›YMÂ² ·+¶v¸]¶|W,Ã§ ,Ã¿±             ¼          ½        ¾ J     Çt  Ì    ÿ   i  ”ú  	€  Y  ' 
+    ­ƒ…¸‡ƒƒ¸‰ƒ¸‹² ‹¸Ë¸´ƒ…‘¸“¸ ø² ‡¸Ë¼Y…RYRY•RYRL¼YRY•RYRY…RM+,¸—² ^¸Ë™›¸¬² ¸Ëƒƒ¸¬±    ¼   B   & ' ( $* *+ 0, B/ E0 K1 g2 ƒ3 ˆ6 Ž7 š8  9 ¬: ½        ­Ÿ    g F;  ƒ *Ÿ;  ¡   ¢£   * ¤¦	§© 	óª© 	Ü¬© 	 ®© 	
