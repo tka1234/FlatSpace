@@ -1,0 +1,5 @@
+ - Convert timer system to modulus
+ - add different types of blocks
+ - clean up looped code
+ - grid background
+ - enhance fancy graphics
