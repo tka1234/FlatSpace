@@ -10,7 +10,9 @@ The score merely goes up an infinite amount of times.
 
 Controls:
 Use the mouse to target boxes, and click to move the spaceship forward in that direction.
-Press F3 to open the debug menu (just like Minecraft!!)
- - E: The amount of entities (blocks & bullets) plotted on the screen
- - S: The amount of bullets fired
- - T: The clock for creating new boxes, when it reaches 30 a new box and a new bullet spawns
+
+Debug Controls:
+ - F1: Fancy Graphics Mode (experimental)
+ - F2: Invinciblity Mode
+ - F3: Debug Menu, with info (E = Entities, S = Bullets Fired, T = Program Clock)
+ - F4: Bullets Off
