@@ -26,10 +26,6 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     public static final Color WHITE      = Color.WHITE;
     public static final Color YELLOW     = Color.YELLOW;
 
-    /**
-     * Shade of blue used in Introduction to Programming in Java.
-     * It is Pantone 300U. The RGB values are approximately (9, 90, 166).
-     */
     public static final Color BOOK_BLUE       = new Color(  9,  90, 166);
     public static final Color BOOK_LIGHT_BLUE = new Color(103, 198, 243);
 
@@ -163,7 +159,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
         // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
-        frame.setTitle("Standard Draw");
+        frame.setTitle("Flatspace");
         frame.setJMenuBar(createMenuBar());
         frame.pack();
         frame.requestFocusInWindow();
@@ -173,9 +169,9 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     // create the menu bar (changed to private)
     private static JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenu menu = new JMenu("Screenshot");
         menuBar.add(menu);
-        JMenuItem menuItem1 = new JMenuItem(" Save...   ");
+        JMenuItem menuItem1 = new JMenuItem(" Save Screenshot   ");
         menuItem1.addActionListener(std);
         menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -1051,5 +1047,26 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
             keysDown.remove(e.getKeyCode());
         }
     }
-    public static void main(String[] args) {System.out.print("Clearly you are bad");}
+    public static void main(String[] args) {
+        StdDraw.square(.2, .8, .1);
+        StdDraw.filledSquare(.8, .8, .2);
+        StdDraw.circle(.8, .2, .2);
+
+        StdDraw.setPenColor(StdDraw.BOOK_RED);
+        StdDraw.setPenRadius(.02);
+        StdDraw.arc(.8, .2, .1, 200, 45);
+
+        // draw a blue diamond
+        StdDraw.setPenRadius();
+        StdDraw.setPenColor(StdDraw.BOOK_BLUE);
+        double[] x = { .1, .2, .3, .2 };
+        double[] y = { .2, .3, .2, .1 };
+        StdDraw.filledPolygon(x, y);
+
+        // text
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.text(0.2, 0.5, "black text");
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(0.8, 0.8, "white text");
+    }
 }
