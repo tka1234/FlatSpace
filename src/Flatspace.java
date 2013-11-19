@@ -1,12 +1,12 @@
-//FlatSpace Alpha 1.3: large blocks harder to destroy, reset for long timer, clock, splash, title/screenshot window.
-import java.util.*;
+//FlatSpace Alpha Wilsonis 1.4: Levels System, Difficulty Scaling, High Score System, Stuff no longer spawns on top of you
+import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
 	public static ArrayList<Double> YObject = new ArrayList<Double>();
 	public static ArrayList<Double> VXObject = new ArrayList<Double>();
 	public static ArrayList<Double> VYObject = new ArrayList<Double>();
 	public static ArrayList<Double> TypeObject = new ArrayList<Double>();
-	public static void main(String args[]) throws InterruptedException {
+	public static void main(String args[]) throws InterruptedException, FileNotFoundException {
 		Random rng = new Random();
 		StdDraw.setXscale(-1.0, 1.0);
 		StdDraw.setYscale(-1.0, 1.0);
@@ -14,6 +14,14 @@ public class Flatspace {
 		StdDraw.show(0);
 		while (!StdDraw.mousePressed()) {}
 		while (true) {
+		//gets high score values
+			File inFile = new File("FlatspaceHighScore.txt");
+			Scanner in = new Scanner(inFile);
+			int bestScore = (int) in.nextDouble();
+			int bestLevel = (int) in.nextDouble();
+			double bestTime = in.nextDouble();
+			in.close();
+		//clears arrays of previous info
 			XObject.clear();
 			YObject.clear();
 			VXObject.clear();
@@ -21,9 +29,10 @@ public class Flatspace {
 			TypeObject.clear();
 			StdDraw.setPenColor(StdDraw.BLACK);
 			StdDraw.filledSquare(0, 0, 2);
-			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, ProbabilityLargeDelete = .9, StartTime = System.currentTimeMillis();
-			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, BulletsOn = true;
-			int BulletScore = 0, KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0;
+		//initialize variables
+			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, ProbabilityLargeDelete = .9, StartTime = System.currentTimeMillis(), RandRead = 0;
+			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, BulletsOn = true, DisplayLevel = false;
+			int BulletScore = 0, KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1;
 			while (GameRunning) {
 				StdDraw.setPenColor(255, 0, 0);
 			//Calculate Ship & Fire Angle
@@ -49,9 +58,13 @@ public class Flatspace {
 						VYObject.add(.04 * Math.sin(Math.toRadians(ShipAngle + 90)));
 						TypeObject.add(2.0); } }
 			//Creates Boxes Every 30 Ticks
-				if (LongTimer%30 == 0) {
-					XObject.add((rng.nextDouble() * 2) - 1);
-					YObject.add((rng.nextDouble() * 1.75) - .75);
+				if (GameLevel < 30 && LongTimer%(30 - GameLevel) == 0 && LongTimer != 0) {
+					RandRead = (rng.nextDouble() * 2) - 1;
+					while (RandRead > (XShip - .05) && RandRead < (XShip + .05)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					XObject.add(RandRead);
+					RandRead = (rng.nextDouble() * 1.75) - .75;
+					while (RandRead < (YShip - .05) && RandRead > (YShip + .05)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					YObject.add(RandRead);
 					if (rng.nextDouble() > .5) {VXObject.add(.002);}
 					else {VXObject.add(-.002);}
 					if (rng.nextDouble() > .5) {VYObject.add(.002);}
@@ -154,7 +167,7 @@ public class Flatspace {
 					objectCount = 0;}
 			//Invincible Text & Bullets Off Text
 				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.textRight(1, 1, "Lewpen Flatspace A1.3");
+				StdDraw.textRight(1, 1, "Lewpen Flatspace A1.4");
 				if (!BulletsOn && Invincible) StdDraw.textRight(1, .9, "Invincible, Bullets Off");
 				else if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 			//Gray HUD With Scores
@@ -162,8 +175,11 @@ public class Flatspace {
 				StdDraw.filledRectangle(0, -1, 1.5, .2);
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.textLeft(-1, -.9, "Score: " + GameScore);
-				StdDraw.textLeft(-1, -1, "High Score: ");
+				StdDraw.textLeft(-1, -1, "High Score: " + bestScore);
+				StdDraw.textRight(1, -.9, "Level " + GameLevel);
+				StdDraw.textRight(1, -1, "Best Level: " + bestLevel);
 				StdDraw.text(0, -.9, ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " Seconds");
+				StdDraw.text(0, -1, "Best Time: " + bestTime + " Seconds");
 			//Debug Menu Hotkey = F3
 				if (StdDraw.isKeyPressed(114) && KeyTimeout > 30) {
 					if (DebugMenu) {DebugMenu = false; KeyTimeout = 0;}
@@ -181,12 +197,11 @@ public class Flatspace {
 					StdDraw.setPenColor(StdDraw.WHITE);
 					StdDraw.textLeft(-1, 1, "DEBUG MENU - E: " + XObject.size());
 					StdDraw.textLeft(-1, .9, "S: " + BulletScore);
-					StdDraw.textLeft(-1, .8, "T: " + LongTimer);}
+					StdDraw.textLeft(-1, .8, "T: " + LongTimer); }
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
 					StdDraw.setPenColor(0, 0, 0); 
-					//StdDraw.filledSquare(0, 0, 2);
 					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);}
 				if (XObject.size() > 100) {
 					XObject.remove(0);
@@ -196,14 +211,44 @@ public class Flatspace {
 					TypeObject.remove(0); }
 			//Moves Timers Forward
 				LongTimer++;
+				StdDraw.setPenColor(StdDraw.MAGENTA);
+				if (GameLevel != (int) Math.floor(GameScore / 200) + 1) { 
+					LongTimer = 0;
+					KeyTimeout = 0;
+					DisplayLevel = true;
+					StdDraw.text(0, 0, "Level " + GameLevel);}
+				if (DisplayLevel && KeyTimeout < 30) {StdDraw.text(0, 0, "Level " + GameLevel); }
+				else {DisplayLevel = false;}
+				GameLevel = (int) Math.floor(GameScore / 200) + 1;
 				if (LongTimer == 10000) {LongTimer = 0;}
 				if (KeyTimeout < 32) {KeyTimeout++;}
 				Thread.sleep(16); }
 		StdDraw.setPenColor(StdDraw.RED);
 		StdDraw.filledRectangle(0, -1, 1.5, .2);
 		StdDraw.setPenColor(StdDraw.BLACK);
+	//prints high score, level, and time to file.
+		String EndingSentence = "";
+		File outFile = new File("FlatspaceHighScore.txt");
+		PrintWriter out = new PrintWriter(outFile);
+		if (GameScore > bestScore) {
+			out.print(GameScore + " ");
+			EndingSentence = EndingSentence + "New Best Score! "; }
+		else {out.print(bestScore + " ");}
+		if (GameLevel > bestLevel) {
+			out.print(GameLevel + " ");
+			EndingSentence = EndingSentence + "New Best Level! "; }
+		else {out.print(bestLevel + " ");}
+		if (((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) > bestTime) {
+			out.print(((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " ");
+			EndingSentence = EndingSentence + "New Longest Time! "; }
+		else {out.print(bestTime + " ");}
+		out.close();
+	//hud with results
 		StdDraw.text(0, -.9, "You survived for " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " seconds! Press ESC to restart.");
-		StdDraw.text(0, -1, "Score: " + GameScore);
+		StdDraw.text(0, -1, "Score: " + GameScore + " - Level: " + GameLevel);
+		StdDraw.setPenColor(StdDraw.MAGENTA);
+		StdDraw.textRight(1, .9, EndingSentence);
+		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.show(0);
 		while (!StdDraw.isKeyPressed(27)) {}
 		} } }
