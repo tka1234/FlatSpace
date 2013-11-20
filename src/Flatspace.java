@@ -1,4 +1,5 @@
-//FlatSpace Alpha Wilsonis 1.4: Levels System, Difficulty Scaling, High Score System, Stuff no longer spawns on top of you
+//FlatSpace Alpha Wilsonis 1.5: Levels over 30 are as bad as kevin. Big boxes are nerfed. Larger screen, 700 px by 700.
+//Main Menu with high score gui among other things. Beginning of Hat API!
 import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -6,13 +7,78 @@ public class Flatspace {
 	public static ArrayList<Double> VXObject = new ArrayList<Double>();
 	public static ArrayList<Double> VYObject = new ArrayList<Double>();
 	public static ArrayList<Double> TypeObject = new ArrayList<Double>();
+	public static ArrayList<Double> ItemValues = new ArrayList<Double>();
+	public static ArrayList<String> ItemNames = new ArrayList<String>();
 	public static void main(String args[]) throws InterruptedException, FileNotFoundException {
+		boolean FirstRunning = true;
 		Random rng = new Random();
 		StdDraw.setXscale(-1.0, 1.0);
 		StdDraw.setYscale(-1.0, 1.0);
 		StdDraw.picture(0, 0, "Splash1.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (!StdDraw.mousePressed()) {}
+		StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+		StdDraw.show(0);
+		while (FirstRunning) {
+		//Start Game
+			if (StdDraw.isKeyPressed(112)) {FirstRunning = false; }
+		//View High Scores
+			if (StdDraw.isKeyPressed(113)) {
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				File inFile = new File("FlatspaceHighScore.txt");
+				Scanner in = new Scanner(inFile);
+				int bestScore = (int) in.nextDouble();
+				int bestLevel = (int) in.nextDouble();
+				double bestTime = in.nextDouble();
+				in.close();
+				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.text(0, .8, "Try to beat this next time!");
+				StdDraw.text(0, .4, "High Score:");
+				StdDraw.text(0, .3, bestScore + " Points");
+				StdDraw.text(0, .2, "Level " + bestLevel);
+				StdDraw.text(0, .1, bestTime + " Seconds");
+				StdDraw.text(0, -.5, "Press ESC to return to the menu.");
+				StdDraw.show(0);
+				while (!StdDraw.isKeyPressed(27)) {}
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
+		//Hats
+			if (StdDraw.isKeyPressed(114)) {
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				File inFile = new File("ItemConfig.txt");
+				Scanner in = new Scanner(inFile);
+				while (in.hasNextDouble()) {ItemValues.add(in.nextDouble()); }
+				in.close();
+				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.text(0, 1, "Owned Items - Press Number to Equip");
+				double ItemPlotX = .7; int ItemCount = 0;
+				while (ItemCount < ItemValues.size()) {
+					if (ItemValues.get(ItemCount) == 1.0 && !ItemNames.contains("Rare Space Potato")) {ItemNames.add("Rare Space Potato"); }
+					if (ItemValues.get(ItemCount) == 2.0 && !ItemNames.contains("Rare Ancient Artifact")) {ItemNames.add("Rare Ancient Artifact"); }
+					if (ItemValues.get(ItemCount) == 3.0 && !ItemNames.contains("Common Ode to Valve")) {ItemNames.add("Common Ode to Valve"); }
+					if (ItemValues.get(ItemCount) == 4.0 && !ItemNames.contains("Cursed Give Diretide")) {ItemNames.add("Cursed Give Diretide"); }
+					if (ItemValues.get(ItemCount) == 5.0 && !ItemNames.contains("Common Manuel's Twinky")) {ItemNames.add("Common Manuel's Twinky"); }
+					if (ItemValues.get(ItemCount) == 6.0 && !ItemNames.contains("Rare Carry Visage")) {ItemNames.add("Rare Carry Visage"); }
+					if (ItemValues.get(ItemCount) == 7.0 && !ItemNames.contains("Common Alpha Wilsonian Antimatter")) {ItemNames.add("Common Alpha Wilsonian Antimatter"); }
+					if (ItemValues.get(ItemCount) == 8.0 && !ItemNames.contains("Common Fancee Kar")) {ItemNames.add("Common Fancee Kar"); }
+					StdDraw.text(0, ItemPlotX, ItemCount + ": " + ItemNames.get(ItemCount)); // fix this line.
+					ItemPlotX = ItemPlotX - .1;
+					ItemCount++;}
+				StdDraw.show(0);
+				while (!StdDraw.isKeyPressed(27)) {}
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
+		//How To Play
+			if (StdDraw.isKeyPressed(115)) {}
+		//Options
+			if (StdDraw.isKeyPressed(116)) {}
+			}
 		while (true) {
 		//gets high score values
 			File inFile = new File("FlatspaceHighScore.txt");
@@ -60,10 +126,10 @@ public class Flatspace {
 			//Creates Boxes Every 30 Ticks
 				if (GameLevel < 30 && LongTimer%(30 - GameLevel) == 0 && LongTimer != 0) {
 					RandRead = (rng.nextDouble() * 2) - 1;
-					while (RandRead > (XShip - .05) && RandRead < (XShip + .05)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					XObject.add(RandRead);
 					RandRead = (rng.nextDouble() * 1.75) - .75;
-					while (RandRead < (YShip - .05) && RandRead > (YShip + .05)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
 					if (rng.nextDouble() > .5) {VXObject.add(.002);}
 					else {VXObject.add(-.002);}
@@ -71,6 +137,21 @@ public class Flatspace {
 					else {VYObject.add(-.002);}
 					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 					else {TypeObject.add(4.0); } }
+			//Game Levels over 30...
+				else if (GameLevel >= 30) {
+					for (int i = 0; i < (GameLevel - 29); i++) {
+						RandRead = (rng.nextDouble() * 2) - 1;
+						while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+						XObject.add(RandRead);
+						RandRead = (rng.nextDouble() * 1.75) - .75;
+						while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+						YObject.add(RandRead);
+						if (rng.nextDouble() > .5) {VXObject.add(.002);}
+						else {VXObject.add(-.002);}
+						if (rng.nextDouble() > .5) {VYObject.add(.002);}
+						else {VYObject.add(-.002);}
+						if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
+						else {TypeObject.add(4.0); } } }
 			//API For Object Arrays
 				int objectCount = 0;
 				while (objectCount < XObject.size()) {
@@ -117,7 +198,7 @@ public class Flatspace {
 						StdDraw.setPenColor(StdDraw.CYAN);
 						if (VYObject.get(objectCount) != 0) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .16, .16);
-							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+95"); }
+							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+50"); }
 						else {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .08, .08);
 							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+5"); }
@@ -143,7 +224,7 @@ public class Flatspace {
 									TypeObject.set(objectCount, 3.0);
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.0000001);
-									GameScore = GameScore + 95; 
+									GameScore = GameScore + 50; 
 									LoopRunning = false; } }
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
@@ -167,7 +248,7 @@ public class Flatspace {
 					objectCount = 0;}
 			//Invincible Text & Bullets Off Text
 				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.textRight(1, 1, "Lewpen Flatspace A1.4");
+				StdDraw.textRight(1, 1, "Alpha Wilsonis 1.5");
 				if (!BulletsOn && Invincible) StdDraw.textRight(1, .9, "Invincible, Bullets Off");
 				else if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 			//Gray HUD With Scores
@@ -222,7 +303,8 @@ public class Flatspace {
 				GameLevel = (int) Math.floor(GameScore / 200) + 1;
 				if (LongTimer == 10000) {LongTimer = 0;}
 				if (KeyTimeout < 32) {KeyTimeout++;}
-				Thread.sleep(16); }
+				Thread.sleep(16);
+				}
 		StdDraw.setPenColor(StdDraw.RED);
 		StdDraw.filledRectangle(0, -1, 1.5, .2);
 		StdDraw.setPenColor(StdDraw.BLACK);
