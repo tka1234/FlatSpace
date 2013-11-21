@@ -1,5 +1,4 @@
-//FlatSpace Alpha Wilsonis 1.5: Levels over 30 are as bad as kevin. Big boxes are nerfed. Larger screen, 700 px by 700.
-//Main Menu with high score gui among other things. Beginning of Hat API!
+//FlatSpace Alpha Wilsonis 1.6: Removed BulletScore and NoBullets mode. Fixed item array duplication bug.
 import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -58,16 +57,16 @@ public class Flatspace {
 				double ItemPlotX = .7; int ItemCount = 0;
 				while (ItemCount < ItemValues.size()) {
 					if (ItemValues.get(ItemCount) == 1.0 && !ItemNames.contains("Rare Space Potato")) {ItemNames.add("Rare Space Potato"); }
-					if (ItemValues.get(ItemCount) == 2.0 && !ItemNames.contains("Rare Ancient Artifact")) {ItemNames.add("Rare Ancient Artifact"); }
-					if (ItemValues.get(ItemCount) == 3.0 && !ItemNames.contains("Common Ode to Valve")) {ItemNames.add("Common Ode to Valve"); }
-					if (ItemValues.get(ItemCount) == 4.0 && !ItemNames.contains("Cursed Give Diretide")) {ItemNames.add("Cursed Give Diretide"); }
-					if (ItemValues.get(ItemCount) == 5.0 && !ItemNames.contains("Common Manuel's Twinky")) {ItemNames.add("Common Manuel's Twinky"); }
-					if (ItemValues.get(ItemCount) == 6.0 && !ItemNames.contains("Rare Carry Visage")) {ItemNames.add("Rare Carry Visage"); }
-					if (ItemValues.get(ItemCount) == 7.0 && !ItemNames.contains("Common Alpha Wilsonian Antimatter")) {ItemNames.add("Common Alpha Wilsonian Antimatter"); }
-					if (ItemValues.get(ItemCount) == 8.0 && !ItemNames.contains("Common Fancee Kar")) {ItemNames.add("Common Fancee Kar"); }
-					StdDraw.text(0, ItemPlotX, ItemCount + ": " + ItemNames.get(ItemCount)); // fix this line.
+					else if (ItemValues.get(ItemCount) == 2.0 && !ItemNames.contains("Rare Ancient Artifact")) {ItemNames.add("Rare Ancient Artifact"); }
+					else if (ItemValues.get(ItemCount) == 3.0 && !ItemNames.contains("Common Ode to Valve")) {ItemNames.add("Common Ode to Valve"); }
+					else if (ItemValues.get(ItemCount) == 4.0 && !ItemNames.contains("Cursed Give Diretide")) {ItemNames.add("Cursed Give Diretide"); }
+					else if (ItemValues.get(ItemCount) == 5.0 && !ItemNames.contains("Common Manuel's Twinky")) {ItemNames.add("Common Manuel's Twinky"); }
+					else if (ItemValues.get(ItemCount) == 6.0 && !ItemNames.contains("Rare Carry Visage")) {ItemNames.add("Rare Carry Visage"); }
+					else if (ItemValues.get(ItemCount) == 7.0 && !ItemNames.contains("Common Alpha Wilsonian Antimatter")) {ItemNames.add("Common Alpha Wilsonian Antimatter"); }
+					else if (ItemValues.get(ItemCount) == 8.0 && !ItemNames.contains("Common Fancee Kar")) {ItemNames.add("Common Fancee Kar"); }
+					if (ItemCount < ItemNames.size()) {StdDraw.text(0, ItemPlotX, ItemCount + ": " + ItemNames.get(ItemCount)); }
 					ItemPlotX = ItemPlotX - .1;
-					ItemCount++;}
+					ItemCount++; }
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
@@ -97,8 +96,8 @@ public class Flatspace {
 			StdDraw.filledSquare(0, 0, 2);
 		//initialize variables
 			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, ProbabilityLargeDelete = .9, StartTime = System.currentTimeMillis(), RandRead = 0;
-			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, BulletsOn = true, DisplayLevel = false;
-			int BulletScore = 0, KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1;
+			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false;
+			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1;
 			while (GameRunning) {
 				StdDraw.setPenColor(255, 0, 0);
 			//Calculate Ship & Fire Angle
@@ -115,9 +114,8 @@ public class Flatspace {
 					XShip = XShip + (XMouse - XShip) / 50;
 					YShip = YShip + (YMouse - YShip) / 50; }
 			//Creates Bullets Every 30 Ticks
-				if (ShipAngle > -360 && ShipAngle < 360 && BulletsOn) {
+				if (ShipAngle > -360 && ShipAngle < 360) {
 					if (LongTimer%7 == 0) {
-						BulletScore++;
 						XObject.add(XShip);
 						YObject.add(YShip);
 						VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
@@ -248,9 +246,8 @@ public class Flatspace {
 					objectCount = 0;}
 			//Invincible Text & Bullets Off Text
 				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.textRight(1, 1, "Alpha Wilsonis 1.5");
-				if (!BulletsOn && Invincible) StdDraw.textRight(1, .9, "Invincible, Bullets Off");
-				else if (Invincible) StdDraw.textRight(1, .9, "Invincible");
+				StdDraw.textRight(1, 1, "Alpha Wilsonis 1.6");
+				if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 			//Gray HUD With Scores
 				StdDraw.setPenColor(192, 192, 192);
 				StdDraw.filledRectangle(0, -1, 1.5, .2);
@@ -269,16 +266,13 @@ public class Flatspace {
 				if (StdDraw.isKeyPressed(113) && KeyTimeout > 30) {
 					if (Invincible) {Invincible = false; KeyTimeout = 0;}
 					else {Invincible = true; KeyTimeout = 0;} }
-			//Bullets Off Hotkey = F4
-				if (StdDraw.isKeyPressed(115) && KeyTimeout > 30) {
-					if (BulletsOn) {BulletsOn = false; KeyTimeout = 0;}
-					else {BulletsOn = true; KeyTimeout = 0;} }
+			//Stops Game if Esc Pressed
+				if (StdDraw.isKeyPressed(27) && KeyTimeout > 30) {KeyTimeout = 0; GameRunning = false;}
 			//Debug Menu HUD
 				if (DebugMenu) {
 					StdDraw.setPenColor(StdDraw.WHITE);
 					StdDraw.textLeft(-1, 1, "DEBUG MENU - E: " + XObject.size());
-					StdDraw.textLeft(-1, .9, "S: " + BulletScore);
-					StdDraw.textLeft(-1, .8, "T: " + LongTimer); }
+					StdDraw.textLeft(-1, .8, "Clock: " + LongTimer); }
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
