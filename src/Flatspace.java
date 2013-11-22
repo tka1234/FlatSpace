@@ -1,4 +1,4 @@
-//FlatSpace Alpha Wilsonis 1.6: Removed BulletScore and NoBullets mode. Fixed item array duplication bug.
+//FlatSpace Alpha Wilsonis 1.7: Faster Bullets PowerUp!! How to Play Menu. When game ends returns to main menu.
 import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -9,13 +9,14 @@ public class Flatspace {
 	public static ArrayList<Double> ItemValues = new ArrayList<Double>();
 	public static ArrayList<String> ItemNames = new ArrayList<String>();
 	public static void main(String args[]) throws InterruptedException, FileNotFoundException {
-		boolean FirstRunning = true;
 		Random rng = new Random();
 		StdDraw.setXscale(-1.0, 1.0);
 		StdDraw.setYscale(-1.0, 1.0);
 		StdDraw.picture(0, 0, "Splash1.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (!StdDraw.mousePressed()) {}
+		while (true) {
+		boolean FirstRunning = true, AllRunning = true;
 		StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (FirstRunning) {
@@ -74,11 +75,27 @@ public class Flatspace {
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 				StdDraw.show(0); }
 		//How To Play
-			if (StdDraw.isKeyPressed(115)) {}
+			if (StdDraw.isKeyPressed(115)) {
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.text(0, 1, "How To Play Flatspace");
+				StdDraw.text(0, .7, "Use the mouse to target the boxes!");
+				StdDraw.text(0, .6, "Click to move your spaceship forward.");
+				StdDraw.text(0, .5, "Destroy power-ups to get special abilities.");
+				StdDraw.text(0, .4, "Levels increase and get harder every 200 points.");
+				StdDraw.text(0, .3, "Large Boxes = 50 pts, Small Boxes = 5 pts");
+				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
+				StdDraw.show(0);
+				while (!StdDraw.isKeyPressed(27)) {}
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
 		//Options
 			if (StdDraw.isKeyPressed(116)) {}
 			}
-		while (true) {
+		while (AllRunning) {
 		//gets high score values
 			File inFile = new File("FlatspaceHighScore.txt");
 			Scanner in = new Scanner(inFile);
@@ -97,7 +114,8 @@ public class Flatspace {
 		//initialize variables
 			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, ProbabilityLargeDelete = .9, StartTime = System.currentTimeMillis(), RandRead = 0;
 			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false;
-			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1;
+			boolean PFireRate = false;
+			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0;
 			while (GameRunning) {
 				StdDraw.setPenColor(255, 0, 0);
 			//Calculate Ship & Fire Angle
@@ -115,7 +133,13 @@ public class Flatspace {
 					YShip = YShip + (YMouse - YShip) / 50; }
 			//Creates Bullets Every 30 Ticks
 				if (ShipAngle > -360 && ShipAngle < 360) {
-					if (LongTimer%7 == 0) {
+					if (PFireRate && LongTimer%2 == 0) {
+						XObject.add(XShip);
+						YObject.add(YShip);
+						VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
+						VYObject.add(.04 * Math.sin(Math.toRadians(ShipAngle + 90)));
+						TypeObject.add(2.0); }
+					else if (LongTimer%7 == 0) {
 						XObject.add(XShip);
 						YObject.add(YShip);
 						VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
@@ -150,6 +174,12 @@ public class Flatspace {
 						else {VYObject.add(-.002);}
 						if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 						else {TypeObject.add(4.0); } } }
+				if (rng.nextInt(500) == 5) {
+					XObject.add((rng.nextDouble() * 2) - 1);
+					YObject.add((rng.nextDouble() * 2) - 1);
+					VXObject.add(0.0);
+					VYObject.add(0.0);
+					TypeObject.add(5.0); }
 			//API For Object Arrays
 				int objectCount = 0;
 				while (objectCount < XObject.size()) {
@@ -228,9 +258,33 @@ public class Flatspace {
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(StdDraw.WHITE);
 							StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .08); } }
+				//For Fire Rate Powerup
+					else if (TypeObject.get(objectCount) == 5.0) {
+						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 && Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								XObject.remove(DetectCount);
+								YObject.remove(DetectCount);
+								VXObject.remove(DetectCount);
+								VYObject.remove(DetectCount);
+								TypeObject.remove(DetectCount);
+								if (XObject.size() != objectCount) {
+									XObject.remove(objectCount);
+									YObject.remove(objectCount);
+									VXObject.remove(objectCount);
+									VYObject.remove(objectCount);
+									TypeObject.remove(objectCount);
+									if (!PFireRate) {
+										PFireRate = true;
+										PTimer = 0; }
+									LoopRunning = false; } }
+								else {DetectCount++;} }
+						//If Powerup Still Exists, Plots It
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "PFireRate.jpg", .08, .08); } }
 					DetectCount = 0;
 					if (LoopRunning) {objectCount++;}
 					LoopRunning = true;}
+				if (PFireRate && PTimer < 50) { PTimer++; }
+				if (PTimer > 48) {PFireRate = false;}
 			//Ship Hit Detection
 				if (!Invincible) {
 					objectCount = 0;
@@ -320,11 +374,13 @@ public class Flatspace {
 		else {out.print(bestTime + " ");}
 		out.close();
 	//hud with results
-		StdDraw.text(0, -.9, "You survived for " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " seconds! Press ESC to restart.");
+		StdDraw.text(0, -.9, "You survived for " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " seconds! Press ESC to return to menu.");
 		StdDraw.text(0, -1, "Score: " + GameScore + " - Level: " + GameLevel);
 		StdDraw.setPenColor(StdDraw.MAGENTA);
 		StdDraw.textRight(1, .9, EndingSentence);
 		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.show(0);
+		Thread.sleep(1000);
 		while (!StdDraw.isKeyPressed(27)) {}
-		} } }
+		AllRunning = false;
+		} } } }
