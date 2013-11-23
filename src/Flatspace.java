@@ -1,4 +1,4 @@
-//FlatSpace Alpha Wilsonis 1.7: Faster Bullets PowerUp!! How to Play Menu. When game ends returns to main menu.
+//FlatSpace Alpha Wilsonis 1.7 Part 2: Stars! They explode into shrapnel. Upgraded Footer HUD. Version no. in Debug Menu now. Option for VSync on/off. Press ESC to close from the menu.
 import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -16,7 +16,13 @@ public class Flatspace {
 		StdDraw.show(0);
 		while (!StdDraw.mousePressed()) {}
 		while (true) {
+		Thread.sleep(100);
 		boolean FirstRunning = true, AllRunning = true;
+		File inFile = new File("FlatspaceOptions.txt");
+		Scanner in = new Scanner(inFile);
+		boolean VSync = true;
+		if (in.nextDouble() == 0.0) {VSync = false;}
+		in.close();
 		StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (FirstRunning) {
@@ -26,8 +32,8 @@ public class Flatspace {
 			if (StdDraw.isKeyPressed(113)) {
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				File inFile = new File("FlatspaceHighScore.txt");
-				Scanner in = new Scanner(inFile);
+				inFile = new File("FlatspaceHighScore.txt");
+				in = new Scanner(inFile);
 				int bestScore = (int) in.nextDouble();
 				int bestLevel = (int) in.nextDouble();
 				double bestTime = in.nextDouble();
@@ -38,7 +44,7 @@ public class Flatspace {
 				StdDraw.text(0, .3, bestScore + " Points");
 				StdDraw.text(0, .2, "Level " + bestLevel);
 				StdDraw.text(0, .1, bestTime + " Seconds");
-				StdDraw.text(0, -.5, "Press ESC to return to the menu.");
+				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
@@ -49,8 +55,8 @@ public class Flatspace {
 			if (StdDraw.isKeyPressed(114)) {
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				File inFile = new File("ItemConfig.txt");
-				Scanner in = new Scanner(inFile);
+				inFile = new File("ItemConfig.txt");
+				in = new Scanner(inFile);
 				while (in.hasNextDouble()) {ItemValues.add(in.nextDouble()); }
 				in.close();
 				StdDraw.setPenColor(StdDraw.WHITE);
@@ -68,6 +74,7 @@ public class Flatspace {
 					if (ItemCount < ItemNames.size()) {StdDraw.text(0, ItemPlotX, ItemCount + ": " + ItemNames.get(ItemCount)); }
 					ItemPlotX = ItemPlotX - .1;
 					ItemCount++; }
+				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
@@ -85,6 +92,7 @@ public class Flatspace {
 				StdDraw.text(0, .5, "Destroy power-ups to get special abilities.");
 				StdDraw.text(0, .4, "Levels increase and get harder every 200 points.");
 				StdDraw.text(0, .3, "Large Boxes = 50 pts, Small Boxes = 5 pts");
+				StdDraw.text(0, -.3, "Debug Controls: F3 - Menu, F2 - Invincible");
 				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
@@ -93,12 +101,37 @@ public class Flatspace {
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 				StdDraw.show(0); }
 		//Options
-			if (StdDraw.isKeyPressed(116)) {}
-			}
+			if (StdDraw.isKeyPressed(116)) {
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.text(0, 0, "VSync On: " + VSync);
+				StdDraw.text(0, .2, "To switch press F1.");
+				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
+				StdDraw.show(0);
+				while (!StdDraw.isKeyPressed(27)) {
+					if (StdDraw.isKeyPressed(112)) {
+						if (VSync) VSync = false;
+						else VSync = true;
+						File outFile = new File("FlatspaceOptions.txt");
+						PrintWriter out = new PrintWriter(outFile);
+						if (VSync) out.print(1.0);
+						else out.print(0.0);
+						out.close();
+						Thread.sleep(500);
+						StdDraw.text(0, -.3, "Change Confirmed. VSync: " + VSync);
+						StdDraw.show(0);
+						Thread.sleep(1000);
+						break; } }
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.filledSquare(0, 0, 2);
+				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
+			if (StdDraw.isKeyPressed(27)) StdDraw.frame.dispose();}
 		while (AllRunning) {
 		//gets high score values
-			File inFile = new File("FlatspaceHighScore.txt");
-			Scanner in = new Scanner(inFile);
+			inFile = new File("FlatspaceHighScore.txt");
+			in = new Scanner(inFile);
 			int bestScore = (int) in.nextDouble();
 			int bestLevel = (int) in.nextDouble();
 			double bestTime = in.nextDouble();
@@ -174,6 +207,21 @@ public class Flatspace {
 						else {VYObject.add(-.002);}
 						if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 						else {TypeObject.add(4.0); } } }
+			//Star
+				if (GameLevel > 3 && rng.nextInt(100) == 50) {
+					RandRead = (rng.nextDouble() * 2) - 1;
+					while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					XObject.add(RandRead);
+					RandRead = (rng.nextDouble() * 1.75) - .75;
+					while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					YObject.add(RandRead);
+					if (rng.nextDouble() > .5) {VXObject.add(.003);}
+					else {VXObject.add(-.003);}
+					if (rng.nextDouble() > .5) {VYObject.add(.003);}
+					else {VYObject.add(-.003);}
+					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
+					else {TypeObject.add(6.0); } }
+			//Powerups
 				if (rng.nextInt(500) == 5) {
 					XObject.add((rng.nextDouble() * 2) - 1);
 					YObject.add((rng.nextDouble() * 2) - 1);
@@ -184,7 +232,7 @@ public class Flatspace {
 				int objectCount = 0;
 				while (objectCount < XObject.size()) {
 				//Bounce
-					if (TypeObject.get(objectCount) == 1.0 || TypeObject.get(objectCount) == 4.0) {
+					if (TypeObject.get(objectCount) == 1.0 || TypeObject.get(objectCount) == 4.0 || TypeObject.get(objectCount) == 6.0 || TypeObject.get(objectCount) == 7.0) {
 						if (XObject.get(objectCount) > 1.0 || XObject.get(objectCount) < -1.0) {
 							VXObject.set(objectCount, VXObject.get(objectCount) * -1.0);
 							VYObject.set(objectCount, VYObject.get(objectCount) * -1.0); }
@@ -224,9 +272,15 @@ public class Flatspace {
 					else if (TypeObject.get(objectCount) == 3.0) {
 						VXObject.set(objectCount, VXObject.get(objectCount) + 0.00001);
 						StdDraw.setPenColor(StdDraw.CYAN);
-						if (VYObject.get(objectCount) != 0) {
+						if (VYObject.get(objectCount) == 0.00001) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .16, .16);
 							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+50"); }
+						else if (VYObject.get(objectCount) == 0.00002) {
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .08, .08);
+							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+75"); }
+						else if (VYObject.get(objectCount) == 0.00003) {
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .08, .08);
+							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+20"); }
 						else {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Explosion.jpg", .08, .08);
 							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+5"); }
@@ -251,7 +305,7 @@ public class Flatspace {
 								if (XObject.size() != objectCount) {
 									TypeObject.set(objectCount, 3.0);
 									VXObject.set(objectCount, 0.00001);
-									VYObject.set(objectCount, 0.0000001);
+									VYObject.set(objectCount, 0.00001);
 									GameScore = GameScore + 50; 
 									LoopRunning = false; } }
 							else {DetectCount++;} }
@@ -280,6 +334,50 @@ public class Flatspace {
 								else {DetectCount++;} }
 						//If Powerup Still Exists, Plots It
 						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "PFireRate.jpg", .08, .08); } }
+				//For Star
+					else if (TypeObject.get(objectCount) == 6.0) {
+						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 && Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								XObject.remove(DetectCount);
+								YObject.remove(DetectCount);
+								VXObject.remove(DetectCount);
+								VYObject.remove(DetectCount);
+								TypeObject.remove(DetectCount);
+								if (XObject.size() != objectCount) {
+								//Creates Star Fragment Objects
+									for (int i = 1; i != 5; i++) {
+										XObject.add(XObject.get(objectCount));
+										YObject.add(YObject.get(objectCount));
+										VXObject.add(.015 * Math.cos((rng.nextDouble() * 6.28) - 3.14));
+										VYObject.add(.015 * Math.sin((rng.nextDouble() * 6.28) - 3.14));
+										TypeObject.add(7.0); }
+								//Converts To Explosion
+									GameScore = GameScore + 75;
+									VXObject.set(objectCount, 0.00001);
+									VYObject.set(objectCount, 0.00002);
+									TypeObject.set(objectCount, 3.0);
+									LoopRunning = false; } }
+								else {DetectCount++;} }
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSStar.png", .08, .08); } }
+				//Star Fragments
+					else if (TypeObject.get(objectCount) == 7.0) {
+						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .03 && Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .03) {
+								XObject.remove(DetectCount);
+								YObject.remove(DetectCount);
+								VXObject.remove(DetectCount);
+								VYObject.remove(DetectCount);
+								TypeObject.remove(DetectCount);
+								if (XObject.size() != objectCount) {
+								//Converts To Explosion
+									GameScore = GameScore + 20;
+									VXObject.set(objectCount, 0.00001);
+									VYObject.set(objectCount, 0.00003);
+									TypeObject.set(objectCount, 3.0);
+									LoopRunning = false; } }
+								else {DetectCount++;} }
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSFragStar.png", .05, .05); } }
+				//add more object types here
 					DetectCount = 0;
 					if (LoopRunning) {objectCount++;}
 					LoopRunning = true;}
@@ -292,19 +390,20 @@ public class Flatspace {
 						if (TypeObject.get(objectCount) == 1.0 && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
 							GameRunning = false;
 							LoopRunning = false;}
+						if (TypeObject.get(objectCount) == 6.0 && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
+							GameRunning = false;
+							LoopRunning = false;}
+						if (TypeObject.get(objectCount) == 7.0 && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
+							GameRunning = false;
+							LoopRunning = false;}
 						if (TypeObject.get(objectCount) == 4.0 && Math.abs(XObject.get(objectCount)-XShip) < .1 && Math.abs(YObject.get(objectCount)-YShip) < .1) {
 							GameRunning = false;
 							LoopRunning = false;}
 						else {objectCount++;} }
 					LoopRunning = true;
 					objectCount = 0;}
-			//Invincible Text & Bullets Off Text
-				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.textRight(1, 1, "Alpha Wilsonis 1.6");
-				if (Invincible) StdDraw.textRight(1, .9, "Invincible");
-			//Gray HUD With Scores
-				StdDraw.setPenColor(192, 192, 192);
-				StdDraw.filledRectangle(0, -1, 1.5, .2);
+			//Score HUD
+				StdDraw.picture(0, -1, "GFooter.png", 2.2, .5);
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.textLeft(-1, -.9, "Score: " + GameScore);
 				StdDraw.textLeft(-1, -1, "High Score: " + bestScore);
@@ -320,19 +419,21 @@ public class Flatspace {
 				if (StdDraw.isKeyPressed(113) && KeyTimeout > 30) {
 					if (Invincible) {Invincible = false; KeyTimeout = 0;}
 					else {Invincible = true; KeyTimeout = 0;} }
+				if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 			//Stops Game if Esc Pressed
 				if (StdDraw.isKeyPressed(27) && KeyTimeout > 30) {KeyTimeout = 0; GameRunning = false;}
 			//Debug Menu HUD
 				if (DebugMenu) {
 					StdDraw.setPenColor(StdDraw.WHITE);
 					StdDraw.textLeft(-1, 1, "DEBUG MENU - E: " + XObject.size());
-					StdDraw.textLeft(-1, .8, "Clock: " + LongTimer); }
+					StdDraw.textLeft(-1, .9, "Clock: " + LongTimer);
+					StdDraw.textRight(1, 1, "Alpha Wilsonis 1.7 Pt 2");}
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
 					StdDraw.setPenColor(0, 0, 0); 
-					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);}
-				if (XObject.size() > 100) {
+					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5); }
+				if (XObject.size() > 150) {
 					XObject.remove(0);
 					YObject.remove(0);
 					VXObject.remove(0);
@@ -351,8 +452,7 @@ public class Flatspace {
 				GameLevel = (int) Math.floor(GameScore / 200) + 1;
 				if (LongTimer == 10000) {LongTimer = 0;}
 				if (KeyTimeout < 32) {KeyTimeout++;}
-				Thread.sleep(16);
-				}
+				if (VSync) Thread.sleep(16); }
 		StdDraw.setPenColor(StdDraw.RED);
 		StdDraw.filledRectangle(0, -1, 1.5, .2);
 		StdDraw.setPenColor(StdDraw.BLACK);
@@ -380,7 +480,7 @@ public class Flatspace {
 		StdDraw.textRight(1, .9, EndingSentence);
 		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.show(0);
-		Thread.sleep(1000);
+		Thread.sleep(500);
 		while (!StdDraw.isKeyPressed(27)) {}
-		AllRunning = false;
-		} } } }
+		Thread.sleep(100);
+		AllRunning = false; } } } }
