@@ -1,5 +1,6 @@
-//FlatSpace Alpha Wilsonis 1.8: Termination Bug Fixed. Preliminary code for NPC guys. Deleting fixed! It was the bullets all along. At the expense of the entire game working...
-//Explosions Fixed and now are larger and PNG'ized
+//FlatSpace Alpha Wilsonis 1.9: Fixed the large box deletion bug. Array index errors are still running rampant. Size of npc fixed.
+//Now plots pictures instead of box objects. Need to get some transparent box sprites to put in. Edits made to the Hats menu.
+import java.awt.Font; import java.awt.FontFormatException;
 import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -56,26 +57,36 @@ public class Flatspace {
 		//Hats
 			if (StdDraw.isKeyPressed(114)) {
 				StdDraw.setPenColor(StdDraw.BLACK);
-				StdDraw.filledSquare(0, 0, 2);
-				inFile = new File("ItemConfig.txt");
-				in = new Scanner(inFile);
-				while (in.hasNextDouble()) {ItemValues.add(in.nextDouble()); }
-				in.close();
-				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.text(0, 1, "Owned Items - Press Number to Equip");
+				StdDraw.picture(0, 0, "MInventory.jpg", 2.2, 2.2);
+				Font TestFont = new Font("Serif", Font.PLAIN, 20);
+				Font BigFont = new Font("Serif", Font.PLAIN, 20);
+				try {TestFont = Font.createFont(Font.TRUETYPE_FONT, new File("Font.ttf"));
+				float potato = 20;
+				BigFont = TestFont.deriveFont(potato);}
+				catch (FontFormatException e) {e.printStackTrace(); }
+				catch (IOException e) {e.printStackTrace(); }
+				StdDraw.setFont(BigFont);
+				if (ItemValues.size() == 0) {
+					inFile = new File("ItemConfig.txt");
+					in = new Scanner(inFile);
+					while (in.hasNextDouble()) {ItemValues.add(in.nextDouble()); }
+					in.close();
+					int ItemCount = 0;
+					while (ItemCount < ItemValues.size()) {
+						if (ItemValues.get(ItemCount) == 1.0) {ItemNames.add("Rare Space Potato");}
+						if (ItemValues.get(ItemCount) == 2.0) {ItemNames.add("Common Ode to Valve");}
+						if (ItemValues.get(ItemCount) == 3.0) {ItemNames.add("Cursed Give Diretide");}
+						if (ItemValues.get(ItemCount) == 4.0) {ItemNames.add("Common Manuels Twinky");}
+						if (ItemValues.get(ItemCount) == 5.0) {ItemNames.add("Rare Carry Visage");}
+						if (ItemValues.get(ItemCount) == 6.0) {ItemNames.add("Common Wilsonian Antimatter");}
+						if (ItemValues.get(ItemCount) == 7.0) {ItemNames.add("Common Fancee Kar");} 
+						ItemCount++;} }
 				double ItemPlotX = .7; int ItemCount = 0;
 				while (ItemCount < ItemValues.size()) {
-					if (ItemValues.get(ItemCount) == 1.0 && !ItemNames.contains("Rare Space Potato")) {ItemNames.add("Rare Space Potato"); }
-					else if (ItemValues.get(ItemCount) == 2.0 && !ItemNames.contains("Rare Ancient Artifact")) {ItemNames.add("Rare Ancient Artifact"); }
-					else if (ItemValues.get(ItemCount) == 3.0 && !ItemNames.contains("Common Ode to Valve")) {ItemNames.add("Common Ode to Valve"); }
-					else if (ItemValues.get(ItemCount) == 4.0 && !ItemNames.contains("Cursed Give Diretide")) {ItemNames.add("Cursed Give Diretide"); }
-					else if (ItemValues.get(ItemCount) == 5.0 && !ItemNames.contains("Common Manuel's Twinky")) {ItemNames.add("Common Manuel's Twinky"); }
-					else if (ItemValues.get(ItemCount) == 6.0 && !ItemNames.contains("Rare Carry Visage")) {ItemNames.add("Rare Carry Visage"); }
-					else if (ItemValues.get(ItemCount) == 7.0 && !ItemNames.contains("Common Alpha Wilsonian Antimatter")) {ItemNames.add("Common Alpha Wilsonian Antimatter"); }
-					else if (ItemValues.get(ItemCount) == 8.0 && !ItemNames.contains("Common Fancee Kar")) {ItemNames.add("Common Fancee Kar"); }
-					if (ItemCount < ItemNames.size()) {StdDraw.text(0, ItemPlotX, ItemCount + ": " + ItemNames.get(ItemCount)); }
-					ItemPlotX = ItemPlotX - .1;
-					ItemCount++; }
+					StdDraw.textLeft(-.7, ItemPlotX, ItemCount + " " + ItemNames.get(ItemCount));
+					ItemCount++;
+					ItemPlotX = ItemPlotX - .1; }
+				StdDraw.text(0, 1, "Owned Items - Press Number to Equip");
 				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
@@ -155,8 +166,10 @@ public class Flatspace {
 			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, StartTime = System.currentTimeMillis(), RandRead = 0;
 			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false;
 			boolean PFireRate = false;
-			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0;
+			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0, rotation = 0;
 			while (GameRunning) {
+				rotation++;
+				if (rotation == 360) rotation = 0;
 				StdDraw.setPenColor(255, 0, 0);
 			//Calculate Ship & Fire Angle
 				XMouse = StdDraw.mouseX();
@@ -265,7 +278,7 @@ public class Flatspace {
 				//For Standard Boxes:
 					if (TypeObject.get(objectCount) == 1.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
 							//Removes Bullet
 								XObject.remove(DetectCount);
@@ -284,7 +297,9 @@ public class Flatspace {
 					//If Square Still Exists, Plots Square
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(255, 255, 255);
-							StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .04); } }
+							//StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .04);
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .08, .08, rotation);
+							} }
 				//For Bullets:
 					else if (TypeObject.get(objectCount) == 2.0) {
 						if (XObject.get(objectCount) > 1.1 || XObject.get(objectCount) < -1.1 || YObject.get(objectCount) > 1.1 || YObject.get(objectCount) < -1.1) {
@@ -295,7 +310,7 @@ public class Flatspace {
 							TypeObject.remove(objectCount);
 							LoopRunning = false; }
 						StdDraw.setPenColor(255, 255, 0);
-						StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
+						if (objectCount != XObject.size()) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
 				//For Explosion Entity
 					else if (TypeObject.get(objectCount) == 3.0) {
 						VXObject.set(objectCount, VXObject.get(objectCount) + 0.00001);
@@ -324,7 +339,7 @@ public class Flatspace {
 				//For Large Square
 					else if (TypeObject.get(objectCount) == 4.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.size() < DetectCount && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .08 &&
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .08 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .08) {
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
@@ -340,11 +355,13 @@ public class Flatspace {
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(StdDraw.WHITE);
-							StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .08); } }
+							//StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .08);
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "BEAUTIFULMANUEL.png", .16, .16, rotation);
+							} }
 				//For Fire Rate Powerup
 					else if (TypeObject.get(objectCount) == 5.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
@@ -367,7 +384,7 @@ public class Flatspace {
 				//For Star
 					else if (TypeObject.get(objectCount) == 6.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
@@ -389,7 +406,9 @@ public class Flatspace {
 									TypeObject.set(objectCount, 3.0);
 									LoopRunning = false; } }
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSStar.png", .08, .08); } }
+						if (LoopRunning && XObject.size() != objectCount) { //StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSStar.png", .08, .08);
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .08, .08, rotation);} }
+						
 				//Star Fragments
 					else if (TypeObject.get(objectCount) == 7.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
@@ -408,7 +427,9 @@ public class Flatspace {
 									TypeObject.set(objectCount, 3.0);
 									LoopRunning = false; } }
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSFragStar.png", .05, .05); } }
+						if (LoopRunning && XObject.size() != objectCount) {// StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSFragStar.png", .05, .05);
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .05, .05, rotation);} }
+						
 				//NPC
 					else if (TypeObject.get(objectCount) == 8.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
@@ -426,7 +447,7 @@ public class Flatspace {
 									TypeObject.set(objectCount, 3.0);
 									LoopRunning = false; } }
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSnpc.png", .05, .05); }
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSnpc.png", .08, .08); }
 					}
 				//add more object types here
 					DetectCount = 0;
@@ -483,7 +504,7 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .5, "VX: " + VXObject.size());
 					StdDraw.textLeft(-1, .4, "VY: " + VYObject.size());
 					StdDraw.textLeft(-1, .3, "T: " + TypeObject.size());
-					StdDraw.textRight(1, 1, "Alpha Wilsonis 1.7 Pt 2");}
+					StdDraw.textRight(1, 1, "Alpha Wilsonis 1.9");}
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
