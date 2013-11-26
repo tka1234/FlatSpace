@@ -6,6 +6,9 @@ DONE
  - lag issues solved, gone are the days of 1400 fps
  
 TODO
- - clean up looped code
- - add more types of blocks
- - rewrite the program because it upsets kevin
+ - Add NPC characters that fire bullets at you
+ - Hats and Changeable Textures
+ - Better Fonts and GUI
+ - Multiple Line High Score List
+ - Figure out the stupid array bugs
+ - rewrite the program because it upsets kevin... no really make it OO
