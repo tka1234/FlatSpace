@@ -1,7 +1,7 @@
-//FlatSpace Alpha Wilsonis 1.9: Fixed the large box deletion bug. Array index errors are still running rampant. Size of npc fixed.
-//Now plots pictures instead of box objects. Need to get some transparent box sprites to put in. Edits made to the Hats menu.
-import java.awt.Font; import java.awt.FontFormatException;
-import java.io.*; import java.util.*;
+//FlatSpace Alpha Wilsonis 1.9 Pt 2: Able to change pictures easily. Fixed bullets inside squares glitch! Added cool font! Fixed crashing things (?)! Better items inventory and menus.
+//Fixed inventory/skins screen. Again! And now it works. Final version in Alpha! All future versions will be "Out of Alpha and Releasing on Time"!
+//This is the Debuggable Version that prints-out everything to the console! I think the array-offset crashing is fixed but who knows really. Only time will tell. Say goodbye to Alpha!
+import java.awt.Font; import java.awt.FontFormatException; import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
 	public static ArrayList<Double> YObject = new ArrayList<Double>();
@@ -17,6 +17,16 @@ public class Flatspace {
 		StdDraw.picture(0, 0, "Splash1.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (!StdDraw.mousePressed()) {}
+		try {StdDraw.setFont(Font.createFont(Font.TRUETYPE_FONT, new File("ARCADE_R.ttf")).deriveFont((float) 20)); }
+		catch (FontFormatException e) {e.printStackTrace(); }
+		catch (IOException e) {e.printStackTrace(); }
+		String FileSBox = "FSSquare.png";
+		String FileLBox = "FSSquare.png";
+		String FileStar = "FSStar.png";
+		String FileFrag = "FSFrag.png";
+		String FileNPCs = "FSNpc.png";
+		String FileCurs = "FSTriangle.png";
+		int TextureChosen = 1;
 		while (true) {
 		Thread.sleep(50);
 		boolean FirstRunning = true, AllRunning = true;
@@ -56,40 +66,94 @@ public class Flatspace {
 				Thread.sleep(100);}
 		//Hats
 			if (StdDraw.isKeyPressed(114)) {
-				StdDraw.setPenColor(StdDraw.BLACK);
-				StdDraw.picture(0, 0, "MInventory.jpg", 2.2, 2.2);
-				Font TestFont = new Font("Serif", Font.PLAIN, 20);
-				Font BigFont = new Font("Serif", Font.PLAIN, 20);
-				try {TestFont = Font.createFont(Font.TRUETYPE_FONT, new File("Font.ttf"));
-				float potato = 20;
-				BigFont = TestFont.deriveFont(potato);}
-				catch (FontFormatException e) {e.printStackTrace(); }
-				catch (IOException e) {e.printStackTrace(); }
-				StdDraw.setFont(BigFont);
-				if (ItemValues.size() == 0) {
-					inFile = new File("ItemConfig.txt");
-					in = new Scanner(inFile);
-					while (in.hasNextDouble()) {ItemValues.add(in.nextDouble()); }
-					in.close();
-					int ItemCount = 0;
-					while (ItemCount < ItemValues.size()) {
-						if (ItemValues.get(ItemCount) == 1.0) {ItemNames.add("Rare Space Potato");}
-						if (ItemValues.get(ItemCount) == 2.0) {ItemNames.add("Common Ode to Valve");}
-						if (ItemValues.get(ItemCount) == 3.0) {ItemNames.add("Cursed Give Diretide");}
-						if (ItemValues.get(ItemCount) == 4.0) {ItemNames.add("Common Manuels Twinky");}
-						if (ItemValues.get(ItemCount) == 5.0) {ItemNames.add("Rare Carry Visage");}
-						if (ItemValues.get(ItemCount) == 6.0) {ItemNames.add("Common Wilsonian Antimatter");}
-						if (ItemValues.get(ItemCount) == 7.0) {ItemNames.add("Common Fancee Kar");} 
-						ItemCount++;} }
-				double ItemPlotX = .7; int ItemCount = 0;
-				while (ItemCount < ItemValues.size()) {
-					StdDraw.textLeft(-.7, ItemPlotX, ItemCount + " " + ItemNames.get(ItemCount));
-					ItemCount++;
-					ItemPlotX = ItemPlotX - .1; }
-				StdDraw.text(0, 1, "Owned Items - Press Number to Equip");
-				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
+				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.picture(0, 0, "GInventory.jpg", 2.2, 2.2);
+				StdDraw.text(0, -1.05, "Current Texture: #" + TextureChosen);
 				StdDraw.show(0);
-				while (!StdDraw.isKeyPressed(27)) {}
+				boolean WaitLooping = true;
+				while (WaitLooping) {
+					if (StdDraw.isKeyPressed(49)) { //Original
+						FileSBox = "FSSquare.png";
+						FileLBox = "FSSquare.png";
+						FileStar = "FSStar.png";
+						FileFrag = "FSFrag.png";
+						FileNPCs = "FSNpc.png";
+						FileCurs = "FSTriangle.png";
+						TextureChosen = 1;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(50)) { //Space Potato
+						FileSBox = "Texture2/FSSquare.png";
+						FileLBox = "Texture2/FSSquare.png";
+						FileStar = "Texture2/FSStar.png";
+						FileFrag = "Texture2/FSFrag.png";
+						FileNPCs = "Texture2/FSNpc.png";
+						FileCurs = "Texture2/FSTriangle.png";
+						TextureChosen = 2;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(51)) { //Trademark of Valve
+						FileSBox = "Texture3/FSSquare.png";
+						FileLBox = "Texture3/FSSquare.png";
+						FileStar = "Texture3/FSStar.png";
+						FileFrag = "Texture3/FSFrag.png";
+						FileNPCs = "Texture3/FSNpc.png";
+						FileCurs = "Texture3/FSTriangle.png";
+						TextureChosen = 3;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(52)) { //Give Diretide
+						FileSBox = "Texture4/FSSquare.png";
+						FileLBox = "Texture4/FSSquare.png";
+						FileStar = "Texture4/FSStar.png";
+						FileFrag = "Texture4/FSFrag.png";
+						FileNPCs = "Texture4/FSNpc.png";
+						FileCurs = "Texture4/FSTriangle.png";
+						TextureChosen = 4;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(53)) { //Manuel's Twinky
+						FileSBox = "Texture5/FSSquare.png";
+						FileLBox = "Texture5/FSSquare.png";
+						FileStar = "Texture5/FSStar.png";
+						FileFrag = "Texture5/FSFrag.png";
+						FileNPCs = "Texture5/FSNpc.png";
+						FileCurs = "Texture5/FSTriangle.png";
+						TextureChosen = 5;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(54)) { //Carry Visage
+						FileSBox = "Texture6/FSSquare.png";
+						FileLBox = "Texture6/FSSquare.png";
+						FileStar = "Texture6/FSStar.png";
+						FileFrag = "Texture6/FSFrag.png";
+						FileNPCs = "Texture6/FSNpc.png";
+						FileCurs = "Texture6/FSTriangle.png";
+						TextureChosen = 6;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(55)) { //Wilsonian Antimatter
+						FileSBox = "Texture7/FSSquare.png";
+						FileLBox = "Texture7/FSSquare.png";
+						FileStar = "Texture7/FSStar.png";
+						FileFrag = "Texture7/FSFrag.png";
+						FileNPCs = "Texture7/FSNpc.png";
+						FileCurs = "Texture7/FSTriangle.png";
+						TextureChosen = 7;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(56)) { //The Fancee Kar
+						FileSBox = "Texture8/FSSquare.png";
+						FileLBox = "Texture8/FSSquare.png";
+						FileStar = "Texture8/FSStar.png";
+						FileFrag = "Texture8/FSFrag.png";
+						FileNPCs = "Texture8/FSNpc.png";
+						FileCurs = "Texture8/FSTriangle.png";
+						TextureChosen = 8;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(57)) { //FatSpace
+						FileSBox = "Texture9/FSSquare.png";
+						FileLBox = "Texture9/FSSquare.png";
+						FileStar = "Texture9/FSStar.png";
+						FileFrag = "Texture9/FSFrag.png";
+						FileNPCs = "Texture9/FSNpc.png";
+						FileCurs = "Texture9/FSTriangle.png";
+						TextureChosen = 9;
+						WaitLooping = false; }
+					if (StdDraw.isKeyPressed(27)) {WaitLooping = false;} }
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
@@ -101,12 +165,15 @@ public class Flatspace {
 				StdDraw.filledSquare(0, 0, 2);
 				StdDraw.setPenColor(StdDraw.WHITE);
 				StdDraw.text(0, 1, "How To Play Flatspace");
-				StdDraw.text(0, .7, "Use the mouse to target the boxes!");
-				StdDraw.text(0, .6, "Click to move your spaceship forward.");
-				StdDraw.text(0, .5, "Destroy power-ups to get special abilities.");
-				StdDraw.text(0, .4, "Levels increase and get harder every 200 points.");
-				StdDraw.text(0, .3, "Large Boxes = 50 pts, Small Boxes = 5 pts");
-				StdDraw.text(0, -.3, "Debug Controls: F3 - Menu, F2 - Invincible");
+				StdDraw.text(0, .7, "Use mouse to target objects!");
+				StdDraw.text(0, .6, "Click to move yourself forward");
+				StdDraw.text(0, .5, "Powerups give special abilities");
+				StdDraw.text(0, .4, "Levels increase every 200 points");
+				StdDraw.text(0, .2, "Small Boxes = 5 pts");
+				StdDraw.text(0, .1, "Large Boxes = 50 pts");
+				StdDraw.text(0, 0, "Stars = 75 pts");
+				StdDraw.text(0, -.1, "Star Pieces = 20 pts");
+				StdDraw.text(0, -.2, "Enemies = 75 pts");
 				StdDraw.textRight(1, -1, "Press ESC to return to the menu.");
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
@@ -142,10 +209,7 @@ public class Flatspace {
 				StdDraw.filledSquare(0, 0, 2);
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 				StdDraw.show(0); 
-				Thread.sleep(100);}
-			if (StdDraw.isKeyPressed(27)) {
-				StdDraw.frame.dispose();
-				System.exit(0); } }
+				Thread.sleep(100);} }
 		while (AllRunning) {
 		//gets high score values
 			inFile = new File("FlatspaceHighScore.txt");
@@ -163,11 +227,18 @@ public class Flatspace {
 			StdDraw.setPenColor(StdDraw.BLACK);
 			StdDraw.filledSquare(0, 0, 2);
 		//initialize variables
-			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, StartTime = System.currentTimeMillis(), RandRead = 0;
+			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, StartTime = System.currentTimeMillis(), RandRead = 0, FpsStart = System.currentTimeMillis();
 			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false;
 			boolean PFireRate = false;
 			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0, rotation = 0;
+			int NpcRotation = 0, FramesPassed = 0, FPS = 0;
 			while (GameRunning) {
+				StdDraw.text(0, 1, FPS + " FPS");
+				FramesPassed++;
+				if (System.currentTimeMillis() - FpsStart > 1000) {
+					FPS = FramesPassed;
+					FramesPassed = 0;
+					FpsStart = System.currentTimeMillis(); }
 				rotation++;
 				if (rotation == 360) rotation = 0;
 				StdDraw.setPenColor(255, 0, 0);
@@ -178,7 +249,7 @@ public class Flatspace {
 				if (StdDraw.mouseX() < XShip) {ShipAngle = ShipAngle - 180;}
 			//Draws Ship and Target
 				if (ShipAngle > -360 && ShipAngle < 360) {
-					StdDraw.picture(XShip, YShip, "FixedTriangle.png", .06, .06, ShipAngle);
+					StdDraw.picture(XShip, YShip, FileCurs, .06, .06, ShipAngle);
 					StdDraw.circle(XMouse, YMouse, .03); }
 			//Moves Ship When Mouse Pressed
 				if (StdDraw.mousePressed()) {
@@ -201,10 +272,10 @@ public class Flatspace {
 			//Creates Boxes Every 30 Ticks
 				if (GameLevel < 30 && LongTimer%(30 - GameLevel) == 0 && LongTimer != 0) {
 					RandRead = (rng.nextDouble() * 2) - 1;
-					while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead > (XShip - .2) && RandRead < (XShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					XObject.add(RandRead);
 					RandRead = (rng.nextDouble() * 1.75) - .75;
-					while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
 					if (rng.nextDouble() > .5) {VXObject.add(.002);}
 					else {VXObject.add(-.002);}
@@ -216,10 +287,10 @@ public class Flatspace {
 				else if (GameLevel >= 30) {
 					for (int i = 0; i < (GameLevel - 29); i++) {
 						RandRead = (rng.nextDouble() * 2) - 1;
-						while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+						while (RandRead > (XShip - .2) && RandRead < (XShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 						XObject.add(RandRead);
 						RandRead = (rng.nextDouble() * 1.75) - .75;
-						while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+						while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 						YObject.add(RandRead);
 						if (rng.nextDouble() > .5) {VXObject.add(.002);}
 						else {VXObject.add(-.002);}
@@ -230,10 +301,10 @@ public class Flatspace {
 			//Star
 				if (GameLevel > 5 && rng.nextInt(100) == 50) {
 					RandRead = (rng.nextDouble() * 2) - 1;
-					while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead > (XShip - .2) && RandRead < (XShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					XObject.add(RandRead);
 					RandRead = (rng.nextDouble() * 1.75) - .75;
-					while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
 					if (rng.nextDouble() > .5) {VXObject.add(.003);}
 					else {VXObject.add(-.003);}
@@ -242,18 +313,27 @@ public class Flatspace {
 					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 					else {TypeObject.add(6.0); } }
 			//npc spawning
-				if (GameLevel > 10 && rng.nextInt(100) == 50) {
+				if (GameLevel > 10 && rng.nextInt(100) == 50 && !TypeObject.contains(8.0)) {
+					NpcRotation = rng.nextInt(360);
 					RandRead = (rng.nextDouble() * 2) - 1;
-					while (RandRead > (XShip - .1) && RandRead < (XShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead > (XShip - .2) && RandRead < (XShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					XObject.add(RandRead);
 					RandRead = (rng.nextDouble() * 1.75) - .75;
-					while (RandRead < (YShip - .1) && RandRead > (YShip + .1)) {RandRead = (rng.nextDouble() * 2) - 1; }
+					while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
 					if (rng.nextDouble() > .5) {VXObject.add(.001);}
 					else {VXObject.add(-.001);}
 					if (rng.nextDouble() > .5) {VYObject.add(.001);}
 					else {VYObject.add(-.001);}
 					if (rng.nextDouble() < .7) {TypeObject.add(8.0); } }
+			//NPC Bullets
+				if (TypeObject.contains(8.0)) {
+					if (LongTimer%12 == 0) {
+						XObject.add(XObject.get(TypeObject.indexOf(8.0)));
+						YObject.add(YObject.get(TypeObject.indexOf(8.0)));
+						VXObject.add(.04 * Math.cos(Math.toRadians(NpcRotation + 90)));
+						VYObject.add(.04 * Math.sin(Math.toRadians(NpcRotation + 90)));
+						TypeObject.add(9.0); } }
 			//Powerups
 				if (rng.nextInt(500) == 5) {
 					XObject.add((rng.nextDouble() * 2) - 1);
@@ -263,23 +343,38 @@ public class Flatspace {
 					TypeObject.add(5.0); }
 			//API For Object Arrays
 				int objectCount = 0;
-				while (objectCount < XObject.size()) {
+				while (objectCount < XObject.size() && objectCount < TypeObject.size()) {
+					while (XObject.size() > TypeObject.size()) {
+						XObject.remove(XObject.size() - 1);
+						YObject.remove(YObject.size() - 1);
+						VXObject.remove(VXObject.size() - 1);
+						VYObject.remove(VYObject.size() - 1);
+						System.out.println("--THE ARRAYS WERE TRUNCATED TO " + TypeObject.size() + " ELEMENTS--"); }
+					while (XObject.size() < TypeObject.size()) {
+						TypeObject.remove(TypeObject.size() - 1);
+						System.out.println("--THE ARRAYS WERE TRUNCATED TO " + XObject.size() + " ELEMENTS--"); }
+					System.out.println(objectCount + " " + DetectCount + " " + XObject.size() + " " + TypeObject.size() + "Game Loop Starting");
 				//Bounce
-					if (TypeObject.get(objectCount) == 1.0 || TypeObject.get(objectCount) == 4.0 || TypeObject.get(objectCount) == 6.0 || TypeObject.get(objectCount) == 7.0) {
+					if (TypeObject.get(objectCount) == 1.0 || TypeObject.get(objectCount) == 4.0 || TypeObject.get(objectCount) == 6.0 || TypeObject.get(objectCount) == 7.0 || TypeObject.get(objectCount) == 8.0) {
 						if (XObject.get(objectCount) > 1.0 || XObject.get(objectCount) < -1.0) {
 							VXObject.set(objectCount, VXObject.get(objectCount) * -1.0);
 							VYObject.set(objectCount, VYObject.get(objectCount) * -1.0); }
 						if (YObject.get(objectCount) > 1.0 || YObject.get(objectCount) < -.75) {
 							VXObject.set(objectCount, VXObject.get(objectCount) * -1.0);
 							VYObject.set(objectCount, VYObject.get(objectCount) * -1.0); } }
+					System.out.println("Object " + objectCount + " Successfully Bounced.");
 				//Applies Speeds To Objects
 					XObject.set(objectCount, XObject.get(objectCount) + VXObject.get(objectCount));
 					YObject.set(objectCount, YObject.get(objectCount) + VYObject.get(objectCount));
+					System.out.println("New X&Y for Object " + objectCount + " Applied.");
 				//For Standard Boxes:
 					if (TypeObject.get(objectCount) == 1.0) {
+						System.out.println("Object " + objectCount + " Is A StdBox.");
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
+							if (DetectCount != TypeObject.size() && objectCount != XObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								System.out.println("Is Scheduled For Deletion");
 							//Removes Bullet
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
@@ -292,27 +387,31 @@ public class Flatspace {
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.0);
 									GameScore = GameScore + 5; 
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 							else {DetectCount++;} }
 					//If Square Still Exists, Plots Square
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(255, 255, 255);
-							//StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .04);
-							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .08, .08, rotation);
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileSBox, .08, .08, rotation);
 							} }
 				//For Bullets:
 					else if (TypeObject.get(objectCount) == 2.0) {
+						System.out.println("Object " + objectCount + " Is A Bullet.");
 						if (XObject.get(objectCount) > 1.1 || XObject.get(objectCount) < -1.1 || YObject.get(objectCount) > 1.1 || YObject.get(objectCount) < -1.1) {
+							System.out.println("Bullet Is Scheduled For Deletion.");
 							XObject.remove(objectCount);
 							YObject.remove(objectCount);
 							VXObject.remove(objectCount);
 							VYObject.remove(objectCount);
 							TypeObject.remove(objectCount);
+							System.out.println("Bullet Was Deleted.");
 							LoopRunning = false; }
 						StdDraw.setPenColor(255, 255, 0);
-						if (objectCount != XObject.size()) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
+						if (objectCount != XObject.size() && LoopRunning) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
 				//For Explosion Entity
 					else if (TypeObject.get(objectCount) == 3.0) {
+						System.out.println("Object " + objectCount + " Is An Explosion.");
 						VXObject.set(objectCount, VXObject.get(objectCount) + 0.00001);
 						StdDraw.setPenColor(StdDraw.CYAN);
 						if (VYObject.get(objectCount) == 0.00001) {
@@ -329,18 +428,23 @@ public class Flatspace {
 							StdDraw.text(XObject.get(objectCount), YObject.get(objectCount) + .08, "+5"); }
 						StdDraw.setPenColor(StdDraw.WHITE);
 						if (VXObject.get(objectCount) == 0.0002) {
+							System.out.println("Explosion Scheduled for Deletion");
 							if (XObject.size() != objectCount) {
 								XObject.remove(objectCount);
 								YObject.remove(objectCount);
 								VXObject.remove(objectCount);
 								VYObject.remove(objectCount);
 								TypeObject.remove(objectCount);
-								LoopRunning = false; } } }
+								LoopRunning = false; }
+							System.out.println("Explosion Was Deleted.");} }
 				//For Large Square
 					else if (TypeObject.get(objectCount) == 4.0) {
+						System.out.println("Object " + objectCount + " Is A LgBox.");
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
 							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .08 &&
-									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .08) {
+									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .08 && rng.nextInt(4) == 2) {
+								System.out.println("Is Scheduled For Deletion");
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
@@ -351,18 +455,20 @@ public class Flatspace {
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.00001);
 									GameScore = GameScore + 50; 
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(StdDraw.WHITE);
-							//StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .08);
-							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "BEAUTIFULMANUEL.png", .16, .16, rotation);
-							} }
+							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileLBox, .16, .16, rotation); } }
 				//For Fire Rate Powerup
 					else if (TypeObject.get(objectCount) == 5.0) {
+						System.out.println("Object " + objectCount + " Is A PowerUp.");
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
+							if (DetectCount != TypeObject.size() && objectCount != XObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								System.out.println("Is Scheduled For Deletion");
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
@@ -377,64 +483,69 @@ public class Flatspace {
 									if (!PFireRate) {
 										PFireRate = true;
 										PTimer = 0; }
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 								else {DetectCount++;} }
-						//If Powerup Still Exists, Plots It
 						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "PFireRate.jpg", .08, .08); } }
 				//For Star
 					else if (TypeObject.get(objectCount) == 6.0) {
+						System.out.println("Object " + objectCount + " Is A Star.");
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
 							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								System.out.println("Is Scheduled For Deletion");
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
-								//Creates Star Fragment Objects
 									for (int i = 1; i != 5; i++) {
 										XObject.add(XObject.get(objectCount));
 										YObject.add(YObject.get(objectCount));
 										VXObject.add(.015 * Math.cos((rng.nextDouble() * 6.28) - 3.14));
 										VYObject.add(.015 * Math.sin((rng.nextDouble() * 6.28) - 3.14));
 										TypeObject.add(7.0); }
-								//Converts To Explosion
 									GameScore = GameScore + 75;
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.00002);
 									TypeObject.set(objectCount, 3.0);
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) { //StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSStar.png", .08, .08);
-							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .08, .08, rotation);} }
-						
+						if (LoopRunning && XObject.size() != objectCount) {StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileStar, .08, .08, rotation);} }
 				//Star Fragments
 					else if (TypeObject.get(objectCount) == 7.0) {
+						System.out.println("Object " + objectCount + " Is A Star Fragment.");
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .03 &&
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .03 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .03) {
+								System.out.println("Is Scheduled For Deletion");
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
-								//Converts To Explosion
 									GameScore = GameScore + 20;
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.00003);
 									TypeObject.set(objectCount, 3.0);
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) {// StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSFragStar.png", .05, .05);
-							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Planet.png", .05, .05, rotation);} }
-						
+						if (LoopRunning && XObject.size() != objectCount) {StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileFrag, .05, .05, rotation);} }	
 				//NPC
 					else if (TypeObject.get(objectCount) == 8.0) {
+						System.out.println("Object " + objectCount + " Is A Enemy.");
+						NpcRotation++;
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							System.out.println(DetectCount + "/" + TypeObject.size() + " OR " + XObject.size());
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								System.out.println("Is Scheduled For Deletion");
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
@@ -445,27 +556,47 @@ public class Flatspace {
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.00002);
 									TypeObject.set(objectCount, 3.0);
-									LoopRunning = false; } }
+									LoopRunning = false; }
+								System.out.println("Was Deleted.");}
 								else {DetectCount++;} }
-						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "FSnpc.png", .08, .08); }
-					}
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileNPCs, .08, .08, NpcRotation); } }
+				//NPCbullet
+					else if (TypeObject.get(objectCount) == 9.0) {
+						System.out.println("Object " + objectCount + " Is A Enemy Bullet.");
+						if (XObject.get(objectCount) > 1.1 || XObject.get(objectCount) < -1.1 || YObject.get(objectCount) > 1.1 || YObject.get(objectCount) < -1.1) {
+							System.out.println("Bullet Scheduled for Deletion");
+							XObject.remove(objectCount);
+							YObject.remove(objectCount);
+							VXObject.remove(objectCount);
+							VYObject.remove(objectCount);
+							TypeObject.remove(objectCount);
+							LoopRunning = false;
+							System.out.println("Bullet Was Deleted");}
+						StdDraw.setPenColor(StdDraw.GREEN);
+						if (objectCount != XObject.size()) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
 				//add more object types here
 					DetectCount = 0;
-					if (LoopRunning) {objectCount++;}
-					else LoopRunning = true;}
+					if (LoopRunning) {objectCount++; System.out.println("Loop restarting. ObjectCount was increased to " + objectCount);}
+					else {LoopRunning = true; System.out.println("Object Count was not increased from " + objectCount); } }
 				if (PFireRate && PTimer < 50) { PTimer++; }
 				if (PTimer > 48) {PFireRate = false;}
 			//Ship Hit Detection
 				if (!Invincible) {
 					objectCount = 0;
-					while (LoopRunning && objectCount < XObject.size()) {
+					while (LoopRunning && objectCount < XObject.size() && objectCount < TypeObject.size()) {
 						if (TypeObject.get(objectCount) == 1.0 && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
+							GameRunning = false;
+							LoopRunning = false;}
+						if (TypeObject.get(objectCount) == 8.0 && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
 							GameRunning = false;
 							LoopRunning = false;}
 						if (TypeObject.get(objectCount) == 6.0 && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
 							GameRunning = false;
 							LoopRunning = false;}
 						if (TypeObject.get(objectCount) == 7.0 && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
+							GameRunning = false;
+							LoopRunning = false;}
+						if (TypeObject.get(objectCount) == 9.0 && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
 							GameRunning = false;
 							LoopRunning = false;}
 						if (TypeObject.get(objectCount) == 4.0 && Math.abs(XObject.get(objectCount)-XShip) < .1 && Math.abs(YObject.get(objectCount)-YShip) < .1) {
@@ -475,14 +606,12 @@ public class Flatspace {
 					LoopRunning = true;
 					objectCount = 0;}
 			//Score HUD
-				StdDraw.picture(0, -1, "GFooter.png", 2.2, .5);
+				StdDraw.picture(0, -1, "Footer2.png", 2.2, .5);
 				StdDraw.setPenColor(StdDraw.BLACK);
-				StdDraw.textLeft(-1, -.9, "Score: " + GameScore);
-				StdDraw.textLeft(-1, -1, "High Score: " + bestScore);
-				StdDraw.textRight(1, -.9, "Level " + GameLevel);
-				StdDraw.textRight(1, -1, "Best Level: " + bestLevel);
-				StdDraw.text(0, -.9, ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " Seconds");
-				StdDraw.text(0, -1, "Best Time: " + bestTime + " Seconds");
+				StdDraw.textLeft(-.95, -.95, "SCR:" + GameScore);
+				StdDraw.text(0, -1.05, "HISCORE:" + bestScore);
+				StdDraw.textRight(.95, -.95, "LVL " + GameLevel);
+				StdDraw.text(0, -.95, ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC");
 			//Debug Menu Hotkey = F3
 				if (StdDraw.isKeyPressed(114) && KeyTimeout > 30) {
 					if (DebugMenu) {DebugMenu = false; KeyTimeout = 0;}
@@ -491,26 +620,23 @@ public class Flatspace {
 				if (StdDraw.isKeyPressed(113) && KeyTimeout > 30) {
 					if (Invincible) {Invincible = false; KeyTimeout = 0;}
 					else {Invincible = true; KeyTimeout = 0;} }
+				StdDraw.setPenColor(StdDraw.WHITE);
 				if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 			//Stops Game if Esc Pressed
 				if (StdDraw.isKeyPressed(27) && KeyTimeout > 30) {KeyTimeout = 0; GameRunning = false;}
 			//Debug Menu HUD
 				if (DebugMenu) {
 					StdDraw.setPenColor(StdDraw.WHITE);
-					StdDraw.textLeft(-1, 1, "DEBUG MENU - E: " + XObject.size());
-					StdDraw.textLeft(-1, .9, "Clock: " + LongTimer);
-					StdDraw.textLeft(-1, .7, "X: " + XObject.size());
-					StdDraw.textLeft(-1, .6, "Y: " + YObject.size());
-					StdDraw.textLeft(-1, .5, "VX: " + VXObject.size());
-					StdDraw.textLeft(-1, .4, "VY: " + VYObject.size());
-					StdDraw.textLeft(-1, .3, "T: " + TypeObject.size());
-					StdDraw.textRight(1, 1, "Alpha Wilsonis 1.9");}
+					StdDraw.textLeft(-1, 1, "DEBUG MENU");
+					StdDraw.textLeft(-1, .9, "Entities: " + XObject.size());
+					StdDraw.textRight(1, 1, "Alpha Wilsonis 1.9b");}
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
 					StdDraw.setPenColor(0, 0, 0); 
 					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5); }
-				if (XObject.size() > 150) {
+				if (XObject.size() > 200) {
+					System.err.println("Entity Limit Exceeded!");
 					XObject.remove(0);
 					YObject.remove(0);
 					VXObject.remove(0);
@@ -531,28 +657,28 @@ public class Flatspace {
 				if (KeyTimeout < 32) {KeyTimeout++;}
 				if (VSync) Thread.sleep(16); }
 		StdDraw.setPenColor(StdDraw.RED);
-		StdDraw.filledRectangle(0, -1, 1.5, .2);
+		StdDraw.filledRectangle(0, -.95, 1.5, .2);
 		StdDraw.setPenColor(StdDraw.BLACK);
-	//prints high score, level, and time to file.
+	//Save Stats To File
 		String EndingSentence = "";
 		File outFile = new File("FlatspaceHighScore.txt");
 		PrintWriter out = new PrintWriter(outFile);
 		if (GameScore > bestScore) {
 			out.print(GameScore + " ");
-			EndingSentence = EndingSentence + "New Best Score! "; }
+			EndingSentence = EndingSentence + "BEST SCR! "; }
 		else {out.print(bestScore + " ");}
 		if (GameLevel > bestLevel) {
 			out.print(GameLevel + " ");
-			EndingSentence = EndingSentence + "New Best Level! "; }
+			EndingSentence = EndingSentence + "BEST LVL! "; }
 		else {out.print(bestLevel + " ");}
 		if (((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) > bestTime) {
 			out.print(((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " ");
-			EndingSentence = EndingSentence + "New Longest Time! "; }
+			EndingSentence = EndingSentence + "BEST TIME! "; }
 		else {out.print(bestTime + " ");}
 		out.close();
-	//hud with results
-		StdDraw.text(0, -.9, "You survived for " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " seconds! Press ESC to return to menu.");
-		StdDraw.text(0, -1, "Score: " + GameScore + " - Level: " + GameLevel);
+	//HUD for Results
+		StdDraw.text(0, -.9,((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC! Press ESC");
+		StdDraw.text(0, -1, "SCR: " + GameScore + " - LVL: " + GameLevel);
 		StdDraw.setPenColor(StdDraw.MAGENTA);
 		StdDraw.textRight(1, .9, EndingSentence);
 		StdDraw.setPenColor(StdDraw.BLACK);
