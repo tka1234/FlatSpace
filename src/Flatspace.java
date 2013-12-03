@@ -1,5 +1,4 @@
-//FlatSpace Beta Wilsonis 1.0: Welcome to Beta! FPS is more regulated now and runs much better. Lag is prevented at all costs but occurs very much at level 26+.
-//Cleaned up some of the looping code. It is now possible to disable textures if they are annoying. Menu GUIs have been improved again.
+//FlatSpace Beta Wilsonis 1.1: Opens the CD drive to insert a quarter, lol!
 import java.awt.Font; import java.awt.FontFormatException; import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -29,7 +28,7 @@ public class Flatspace {
 		int TextureChosen = 1;
 		while (true) {
 		Thread.sleep(50);
-		boolean FirstRunning = true, AllRunning = true;
+		boolean FirstRunning = true, AllRunning = true, OpenCD = false;
 		File inFile = new File("FlatspaceOptions.txt");
 		Scanner in = new Scanner(inFile);
 		boolean VSync = true;
@@ -604,7 +603,7 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .9, "ENT: " + XObject.size());
 					StdDraw.textLeft(-1, .8, "FPS: " + FPS);
 					StdDraw.textLeft(-1, .7, "VSY: " + VsyncCount);
-					StdDraw.textRight(1, 1, "Beta Wilsonis 1.0");}
+					StdDraw.textRight(1, 1, "Beta Wilsonis 1.1");}
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
@@ -661,6 +660,9 @@ public class Flatspace {
 		StdDraw.textRight(1, .9, EndingSentence);
 		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.show(0);
+		if (OpenCD) {
+			try {Runtime.getRuntime().exec("wscript OpenCD.vbs");}
+			catch (IOException e) {System.exit(0);} }
 		Thread.sleep(1000);
 		while (!StdDraw.isKeyPressed(27)) {}
 		AllRunning = false; } } } }
