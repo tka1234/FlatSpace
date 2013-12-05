@@ -1,10 +1,12 @@
 FlatSpace
 =========
 
-Sources:
-Game Idea: http://www.lewpen.com/games/flatspace/
+Download a runnable version! https://dl.dropboxusercontent.com/u/25808307/FlatSpace%20B1.1.zip
+Just extract the ZIP and double click the Flatspace.jar!
 
-StdDraw Class / API: http://introcs.cs.princeton.edu/java/15inout/
+Sources:
+ - Game Idea: http://www.lewpen.com/games/flatspace/
+ - StdDraw Class / API: http://introcs.cs.princeton.edu/java/15inout/
 
 Gameplay:
 Use the mouse to target floating objects, and click to move the spaceship forward in that direction.
