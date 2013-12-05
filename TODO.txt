@@ -8,11 +8,11 @@ DONE
  - (Hats) Changeable Textures
  - Better Fonts and GUI
  - Stupid Array Bugs are unnoticeably workarounded
+ - Ability to clear high scores in game
  
 TODO
  - Multiple Line High Score List
  - Add more power-ups
- - Ability to clear high scores in-game
  - Easter Eggs and Cheat Codes
  - Rewrite to be Object Oriented
  - Rewrite a "Lite" version (as small as possible)
