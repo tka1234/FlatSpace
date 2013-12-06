@@ -1,6 +1,5 @@
-//FlatSpace Beta Wilsonis 1.1: Opens the CD drive to insert a quarter, lol! Condensed some of the looping code for deletion of objects.
-//More textures work now! Added Menu.java as a dependency - has code for the Options menu, still a work in progress. FlatSpace now goes to the center of your screen!
-//Options Menu now hosted at GameOptions.dat. Added a way in the Options to reset High Score!
+//FlatSpace Beta Wilsonis 1.2: Speed of boxes increases every 3 levels. Better Ending Screen. Hi Scores are read only now. Better Inventory and Instruction Pages.
+//Added a funny easter egg on the main screen accessible by pressing the right arrow key
 import java.awt.*; import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -16,10 +15,27 @@ public class Flatspace {
 		Random rng = new Random();
 		StdDraw.setXscale(-1.0, 1.0);
 		StdDraw.setYscale(-1.0, 1.0);
-		StdDraw.frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - 350, (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - 350);
+		StdDraw.frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - 350, (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - 400);
 		StdDraw.picture(0, 0, "Splash1.jpg", 2.2, 2.2);
 		StdDraw.show(0);
-		while (!StdDraw.mousePressed()) {}
+		String FileSBox = "FSSquare.png";
+		String FileLBox = "FSSquare.png";
+		String FileStar = "FSStar.png";
+		String FileFrag = "FSFrag.png";
+		String FileNPCs = "FSNpc.png";
+		String FileCurs = "FSTriangle.png";
+		while (true) {
+			if (StdDraw.mousePressed()) break;
+			if (StdDraw.isKeyPressed(39)) { //right ak
+				StdDraw.picture(0, 0, "GFatSpace.jpg", 2.2, 2.2);
+				FileSBox = "Texture9/FSSquare.png";
+				FileLBox = "Texture9/FSSquare.png";
+				FileStar = "Texture9/FSStar.png";
+				FileFrag = "Texture9/FSFrag.png";
+				FileNPCs = "Texture9/FSNpc.png";
+				FileCurs = "Texture9/FSTriangle.png";
+				TextureChosen = 9;
+				StdDraw.show(0); } }
 		try {StdDraw.setFont(Font.createFont(Font.TRUETYPE_FONT, new File("ARCADE_R.ttf")).deriveFont((float) 20)); }
 		catch (FontFormatException e) {e.printStackTrace(); }
 		catch (IOException e) {e.printStackTrace(); }
@@ -30,13 +46,6 @@ public class Flatspace {
 		ItemsEnabled = OptionsData.nextBoolean();
 		Debugging = OptionsData.nextBoolean();
 		OptionsData.close();
-	//Initialize Default Texture
-		String FileSBox = "FSSquare.png";
-		String FileLBox = "FSSquare.png";
-		String FileStar = "FSStar.png";
-		String FileFrag = "FSFrag.png";
-		String FileNPCs = "FSNpc.png";
-		String FileCurs = "FSTriangle.png";
 	//Game Loop! Here we go!
 		while (true) {
 		Thread.sleep(50);
@@ -52,7 +61,7 @@ public class Flatspace {
 			if (StdDraw.isKeyPressed(113)) {
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				inFile = new File("FlatspaceHighScore.txt");
+				inFile = new File("HiScore.dat");
 				in = new Scanner(inFile);
 				int bestScore = (int) in.nextDouble();
 				int bestLevel = (int) in.nextDouble();
@@ -89,7 +98,7 @@ public class Flatspace {
 					StdDraw.show(0); }
 				else {
 					StdDraw.picture(0, 0, "GInventory.jpg", 2.2, 2.2);
-					StdDraw.text(0, -1.05, "Current Texture: #" + TextureChosen);
+					StdDraw.text(0, -1, "Current Texture: #" + TextureChosen);
 					StdDraw.show(0);
 					boolean WaitLooping = true;
 					while (WaitLooping) {
@@ -182,27 +191,15 @@ public class Flatspace {
 					Thread.sleep(100); } }
 		//How To Play
 			if (StdDraw.isKeyPressed(115)) {
-				StdDraw.setPenColor(StdDraw.BLACK);
-				StdDraw.filledSquare(0, 0, 2);
-				StdDraw.setPenColor(StdDraw.WHITE);
-				StdDraw.text(0, 1, "How To Play Flatspace");
-				StdDraw.text(0, .7, "Use mouse to target objects!");
-				StdDraw.text(0, .6, "Click to move yourself forward");
-				StdDraw.text(0, .5, "Powerups give special abilities");
-				StdDraw.text(0, .4, "Levels increase every 200 points");
-				StdDraw.text(0, .2, "Small Boxes = 5 pts");
-				StdDraw.text(0, .1, "Large Boxes = 50 pts");
-				StdDraw.text(0, 0, "Stars = 75 pts");
-				StdDraw.text(0, -.1, "Star Pieces = 20 pts");
-				StdDraw.text(0, -.2, "Enemies = 75 pts");
-				StdDraw.text(0, -1, "Press ESC to return to the menu.");
+				StdDraw.clear();
+				StdDraw.picture(0, 0, "GInstructions.jpg", 2.2, 2.2);
 				StdDraw.show(0);
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 				StdDraw.show(0);
-				Thread.sleep(100);}
+				Thread.sleep(100); }
 		//Options
 			if (StdDraw.isKeyPressed(116)) {
 				OptionsData = new Scanner(new File("GameOptions.dat"));
@@ -229,7 +226,7 @@ public class Flatspace {
 				StdDraw.show(0); } }
 		while (AllRunning) {
 		//gets high score values
-			inFile = new File("FlatspaceHighScore.txt");
+			inFile = new File("HiScore.dat");
 			in = new Scanner(inFile);
 			int bestScore = (int) in.nextDouble();
 			int bestLevel = (int) in.nextDouble();
@@ -245,6 +242,7 @@ public class Flatspace {
 			StdDraw.filledSquare(0, 0, 2);
 		//initialize variables
 			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, StartTime = System.currentTimeMillis(), RandRead = 0, FpsStart = System.currentTimeMillis();
+			double BoxSpeed = .002;
 			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false, PFireRate = false, FastMode = false;
 			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0, rotation = 0, NpcRotation = 0, FramesPassed = 0, FPS = 0, VsyncCount = 16;
 			while (GameRunning) {
@@ -268,6 +266,7 @@ public class Flatspace {
 				if (ShipAngle > -360 && ShipAngle < 360 && TextureChosen != 1) StdDraw.picture(XShip, YShip, FileCurs, .12, .12, ShipAngle);
 				if (StdDraw.mousePressed()) {XShip = XShip + (XMouse - XShip) / 50; YShip = YShip + (YMouse - YShip) / 50; }
 			//Creation of Bullets
+				if (GameLevel%3 == 0) BoxSpeed = ((GameLevel / 3) * .001) + .002;
 				if (ShipAngle > -360 && ShipAngle < 360) {
 					if (PFireRate && LongTimer%2 == 0) {
 						XObject.add(XShip);
@@ -289,10 +288,10 @@ public class Flatspace {
 					RandRead = (rng.nextDouble() * 1.75) - .75;
 					while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
-					if (rng.nextDouble() > .5) {VXObject.add(.002);}
-					else {VXObject.add(-.002);}
-					if (rng.nextDouble() > .5) {VYObject.add(.002);}
-					else {VYObject.add(-.002);}
+					if (rng.nextDouble() > .5) {VXObject.add(BoxSpeed);}
+					else {VXObject.add(-1 * BoxSpeed);}
+					if (rng.nextDouble() > .5) {VYObject.add(BoxSpeed);}
+					else {VYObject.add(-1 * BoxSpeed);}
 					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 					else {TypeObject.add(4.0); } }
 				else if (GameLevel >= 30) {
@@ -303,10 +302,10 @@ public class Flatspace {
 						RandRead = (rng.nextDouble() * 1.75) - .75;
 						while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 						YObject.add(RandRead);
-						if (rng.nextDouble() > .5) {VXObject.add(.002);}
-						else {VXObject.add(-.002);}
-						if (rng.nextDouble() > .5) {VYObject.add(.002);}
-						else {VYObject.add(-.002);}
+						if (rng.nextDouble() > .5) {VXObject.add(BoxSpeed);}
+						else {VXObject.add(-1 * BoxSpeed);}
+						if (rng.nextDouble() > .5) {VYObject.add(BoxSpeed);}
+						else {VYObject.add(-1 * BoxSpeed);}
 						if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
 						else {TypeObject.add(4.0); } } }
 			//Star Spawning
@@ -600,14 +599,13 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .9, "ENT: " + XObject.size());
 					StdDraw.textLeft(-1, .8, "FPS: " + FPS);
 					StdDraw.textLeft(-1, .7, "VSY: " + VsyncCount);
-					StdDraw.textRight(1, 1, "Beta Wilsonis 1.1");}
+					StdDraw.textRight(1, 1, "Beta Wilsonis 1.2");}
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
-					//add something about switching grid on/off!
 					StdDraw.setPenColor(0, 0, 0);
 					//StdDraw.filledSquare(0, 0, 2);
-					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5); 
+					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
 					}
 				if (XObject.size() > 150) {
 					XObject.remove(0);
@@ -633,12 +631,10 @@ public class Flatspace {
 				if (LongTimer == 10000) LongTimer = 0;
 				if (KeyTimeout < 32) KeyTimeout++;
 				if (VSync && !FastMode) Thread.sleep(VsyncCount); }
-		StdDraw.setPenColor(StdDraw.RED);
-		StdDraw.filledRectangle(0, -.95, 1.5, .2);
-		StdDraw.setPenColor(StdDraw.BLACK);
 	//Save Stats To File
 		String EndingSentence = "";
-		File outFile = new File("FlatspaceHighScore.txt");
+		new File("HiScore.dat").delete();
+		File outFile = new File("HiScore.dat");
 		PrintWriter out = new PrintWriter(outFile);
 		if (GameScore > bestScore) {
 			out.print(GameScore + " ");
@@ -649,20 +645,47 @@ public class Flatspace {
 			EndingSentence = EndingSentence + "BEST LVL! "; }
 		else {out.print(bestLevel + " ");}
 		if (((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) > bestTime) {
-			out.print(((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " ");
+			out.print(((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10));
 			EndingSentence = EndingSentence + "BEST TIME! "; }
-		else {out.print(bestTime + " ");}
+		else {out.print(bestTime);}
+		outFile.setReadOnly();
 		out.close();
 	//HUD for Results
-		StdDraw.text(0, -.9,((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC! Press ESC");
-		StdDraw.text(0, -1, "SCR: " + GameScore + " - LVL: " + GameLevel);
-		StdDraw.setPenColor(StdDraw.MAGENTA);
-		StdDraw.textRight(1, .9, EndingSentence);
-		StdDraw.setPenColor(StdDraw.BLACK);
+		StdDraw.picture(0, 0, "GEndScreen.jpg", 2.2, 2.2);
+		StdDraw.setPenColor(StdDraw.WHITE);
+		StdDraw.text(0, -.6, GameScore + " PTS, LVL " + GameLevel + ", " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC");
+		if (EndingSentence.equals("")) StdDraw.text(0, -.7, "BETTER LUCK NEXT TIME!");
+		StdDraw.text(0, -.7, " " + EndingSentence);
 		StdDraw.show(0);
+		Thread.sleep(500);
 		if (OpenCD) {
 			try {Runtime.getRuntime().exec("wscript OpenCD.vbs");}
-			catch (IOException e) {System.exit(0);} }
-		Thread.sleep(1000);
-		while (!StdDraw.isKeyPressed(27)) {}
+			catch (IOException e) {System.exit(0);}
+			int CDMessageCounter = 0;
+			boolean penColorSwitch = true;
+			StdDraw.setPenColor(StdDraw.MAGENTA);
+			while (!StdDraw.isKeyPressed(27)) {
+				CDMessageCounter++;
+				if (CDMessageCounter%100 == 0 && penColorSwitch) {
+					penColorSwitch = false;
+					StdDraw.setPenColor(StdDraw.GREEN); }
+				else if (CDMessageCounter%100 == 0 && !penColorSwitch) {
+					penColorSwitch = true;
+					StdDraw.setPenColor(StdDraw.MAGENTA); }
+				StdDraw.text(0, -.85, "INSERT 25 CENTS TO CONTINUE");
+				StdDraw.show(0); } }
+		else {
+			int CDMessageCounter = 0;
+			boolean penColorSwitch = true;
+			StdDraw.setPenColor(StdDraw.MAGENTA);
+			while (!StdDraw.isKeyPressed(27)) {
+				CDMessageCounter++;
+				if (CDMessageCounter%100 == 0 && penColorSwitch) {
+					penColorSwitch = false;
+					StdDraw.setPenColor(StdDraw.GREEN); }
+				else if (CDMessageCounter%100 == 0 && !penColorSwitch) {
+					penColorSwitch = true;
+					StdDraw.setPenColor(StdDraw.MAGENTA); }
+				StdDraw.text(0, -.85, "PRESS ESC TO CONTINUE");
+				StdDraw.show(0); } }
 		AllRunning = false; } } } }
