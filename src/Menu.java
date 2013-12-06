@@ -1,4 +1,4 @@
-//Menu Class for FlatSpace Beta Wilsonis 1.1 
+//Menu Class for FlatSpace Beta Wilsonis 1.2 
 import javax.swing.*; import javax.swing.border.Border; import java.awt.*; import java.awt.event.*; import java.io.*;
 public class Menu extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -60,8 +60,10 @@ public class Menu extends JFrame {
 	private class ResetHSButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			try {
-				PrintWriter HiScores = new PrintWriter(new File("FlatspaceHighScore.txt"));
+				new File("HiScore.dat").delete();
+				PrintWriter HiScores = new PrintWriter(new File("HiScore.dat"));
 				HiScores.print("0.0 0.0 0.0");
-				HiScores.close(); }
+				HiScores.close();
+				new File("HiScore.dat").setReadOnly();}
 			catch (FileNotFoundException e) {e.printStackTrace(); } } }
 	public static void main(String args[]) {System.err.println("This program is a dependency of FlatSpace. It cannot be run on its own."); } }
