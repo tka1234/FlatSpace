@@ -1,5 +1,4 @@
-//FlatSpace Beta Wilsonis 1.2: Speed of boxes increases every 3 levels. Better Ending Screen. Hi Scores are read only now. Better Inventory and Instruction Pages.
-//Added a funny easter egg on the main screen accessible by pressing the right arrow key
+//FlatSpace Beta Wilsonis 1.3: Added... The Wall. Added Health, applied to Large Squares, Stars, and Enemies. Added a Force Field powerup! Game seems to be much harder...
 import java.awt.*; import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -7,6 +6,7 @@ public class Flatspace {
 	public static ArrayList<Double> VXObject = new ArrayList<Double>();
 	public static ArrayList<Double> VYObject = new ArrayList<Double>();
 	public static ArrayList<Double> TypeObject = new ArrayList<Double>();
+	public static ArrayList<Double> HealthObject = new ArrayList<Double>();
 	public static ArrayList<Double> ItemValues = new ArrayList<Double>();
 	public static ArrayList<String> ItemNames = new ArrayList<String>();
 	public static boolean OpenCD, VSync, ItemsEnabled, Debugging;
@@ -238,12 +238,13 @@ public class Flatspace {
 			VXObject.clear();
 			VYObject.clear();
 			TypeObject.clear();
+			HealthObject.clear();
 			StdDraw.setPenColor(StdDraw.BLACK);
 			StdDraw.filledSquare(0, 0, 2);
 		//initialize variables
 			double XShip = 0, YShip = 0, ShipAngle, XMouse, YMouse, StartTime = System.currentTimeMillis(), RandRead = 0, FpsStart = System.currentTimeMillis();
 			double BoxSpeed = .002;
-			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false, PFireRate = false, FastMode = false;
+			boolean DebugMenu = false, LoopRunning = true, GameRunning = true, Invincible = false, DisplayLevel = false, PFireRate = false, FastMode = false, PFField = false, ReqInvincible = false;
 			int KeyTimeout = 0, GameScore = 0, DetectCount = 0, LongTimer = 0, GameLevel = 1, PTimer = 0, rotation = 0, NpcRotation = 0, FramesPassed = 0, FPS = 0, VsyncCount = 16;
 			while (GameRunning) {
 			//Calculation of FPS
@@ -273,13 +274,15 @@ public class Flatspace {
 						YObject.add(YShip);
 						VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
 						VYObject.add(.04 * Math.sin(Math.toRadians(ShipAngle + 90)));
-						TypeObject.add(2.0); }
+						TypeObject.add(2.0);
+						HealthObject.add(1.0);}
 					else if (LongTimer%7 == 0) {
 						XObject.add(XShip);
 						YObject.add(YShip);
 						VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
 						VYObject.add(.04 * Math.sin(Math.toRadians(ShipAngle + 90)));
-						TypeObject.add(2.0); } }
+						TypeObject.add(2.0);
+						HealthObject.add(1.0);} }
 			//Creation of Small & Large Boxes
 				if (GameLevel < 30 && LongTimer%(30 - GameLevel) == 0 && LongTimer != 0) {
 					RandRead = (rng.nextDouble() * 2) - 1;
@@ -288,12 +291,12 @@ public class Flatspace {
 					RandRead = (rng.nextDouble() * 1.75) - .75;
 					while (RandRead < (YShip - .2) && RandRead > (YShip + .2)) {RandRead = (rng.nextDouble() * 2) - 1; }
 					YObject.add(RandRead);
-					if (rng.nextDouble() > .5) {VXObject.add(BoxSpeed);}
-					else {VXObject.add(-1 * BoxSpeed);}
-					if (rng.nextDouble() > .5) {VYObject.add(BoxSpeed);}
+					if (rng.nextDouble() > .5) VXObject.add(BoxSpeed);
+					else VXObject.add(-1 * BoxSpeed);
+					if (rng.nextDouble() > .5) VYObject.add(BoxSpeed);
 					else {VYObject.add(-1 * BoxSpeed);}
-					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
-					else {TypeObject.add(4.0); } }
+					if (rng.nextDouble() < .7) {TypeObject.add(1.0); HealthObject.add(1.0); }
+					else {TypeObject.add(4.0); HealthObject.add(4.0); } }
 				else if (GameLevel >= 30) {
 					for (int i = 0; i < (GameLevel - 29); i++) {
 						RandRead = (rng.nextDouble() * 2) - 1;
@@ -306,8 +309,8 @@ public class Flatspace {
 						else {VXObject.add(-1 * BoxSpeed);}
 						if (rng.nextDouble() > .5) {VYObject.add(BoxSpeed);}
 						else {VYObject.add(-1 * BoxSpeed);}
-						if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
-						else {TypeObject.add(4.0); } } }
+						if (rng.nextDouble() < .7) {TypeObject.add(1.0); HealthObject.add(1.0); }
+						else {TypeObject.add(4.0); HealthObject.add(4.0); } } }
 			//Star Spawning
 				if (GameLevel > 5 && rng.nextInt(100) == 50) {
 					RandRead = (rng.nextDouble() * 2) - 1;
@@ -320,8 +323,8 @@ public class Flatspace {
 					else {VXObject.add(-.003);}
 					if (rng.nextDouble() > .5) {VYObject.add(.003);}
 					else {VYObject.add(-.003);}
-					if (rng.nextDouble() < .7) {TypeObject.add(1.0); }
-					else {TypeObject.add(6.0); } }
+					if (rng.nextDouble() < .7) {TypeObject.add(1.0); HealthObject.add(1.0); }
+					else {TypeObject.add(6.0); HealthObject.add(5.0); } }
 			//Spawning of NPC
 				if (GameLevel > 10 && rng.nextInt(200) == 50 && !TypeObject.contains(8.0)) {
 					NpcRotation = rng.nextInt(360);
@@ -335,31 +338,70 @@ public class Flatspace {
 					else {VXObject.add(-.001);}
 					if (rng.nextDouble() > .5) {VYObject.add(.001);}
 					else {VYObject.add(-.001);}
-					if (rng.nextDouble() < .7) {TypeObject.add(8.0); } }
+					TypeObject.add(8.0);
+					HealthObject.add(10.0); }
 			//NPC Bullets
 				if (TypeObject.contains(8.0) && LongTimer%12 == 0) {
 						XObject.add(XObject.get(TypeObject.indexOf(8.0)));
 						YObject.add(YObject.get(TypeObject.indexOf(8.0)));
 						VXObject.add(.04 * Math.cos(Math.toRadians(NpcRotation + 90)));
 						VYObject.add(.04 * Math.sin(Math.toRadians(NpcRotation + 90)));
-						TypeObject.add(9.0); }
+						TypeObject.add(9.0);
+						HealthObject.add(1.0);}
 			//Power Up Spawning
-				if (rng.nextInt(500) == 5) {
+				if (rng.nextInt(500) == 5 && !TypeObject.contains(5.0)) { //PFireRate
 					XObject.add((rng.nextDouble() * 2) - 1);
 					YObject.add((rng.nextDouble() * 2) - 1);
 					VXObject.add(0.0);
 					VYObject.add(0.0);
-					TypeObject.add(5.0); }
+					TypeObject.add(5.0);
+					HealthObject.add(1.0); }
+				if (rng.nextInt(500) == 5 && !TypeObject.contains(5.1)) { //PFField
+					XObject.add((rng.nextDouble() * 2) - 1);
+					YObject.add((rng.nextDouble() * 2) - 1);
+					VXObject.add(0.0);
+					VYObject.add(0.0);
+					TypeObject.add(5.1);
+					HealthObject.add(1.0); }
+			//The Wall Pieces
+				if (GameLevel >= 15 && GameLevel%5 == 0 && !TypeObject.contains(10.0)) {
+				//if (GameLevel == 1 && !TypeObject.contains(10.0)) {
+					double wallStartX = -1;
+					double wallStartY = 1;
+					for (int i = 0; i < 9; i++) {
+						XObject.add(wallStartX);
+						YObject.add(wallStartY);
+						VXObject.add(0.0);
+						VYObject.add(-.002);
+						TypeObject.add(10.0);
+						HealthObject.add(1.0);
+						wallStartX = wallStartX + .25; }
+					wallStartX = -1;
+					wallStartY = 1.3;
+					for (int i = 0; i < 9; i++) {
+						XObject.add(wallStartX);
+						YObject.add(wallStartY);
+						VXObject.add(0.0);
+						VYObject.add(-.002);
+						TypeObject.add(10.0);
+						HealthObject.add(1.0);
+						wallStartX = wallStartX + .25; } }
+				if (PFField) {
+					StdDraw.setPenColor(StdDraw.BLUE);
+					StdDraw.circle(XShip, YShip, .1); }
 			//Object Array Loop
 				int objectCount = 0;
 				while (objectCount < XObject.size() && objectCount < TypeObject.size() && GameRunning) {
 				//Remove Excess Corrupted Objects
 					while (XObject.size() > TypeObject.size()) {
+						System.out.println("Something Went Wrong");
 						XObject.remove(XObject.size() - 1);
 						YObject.remove(YObject.size() - 1);
 						VXObject.remove(VXObject.size() - 1);
-						VYObject.remove(VYObject.size() - 1); }
+						VYObject.remove(VYObject.size() - 1);
+						HealthObject.remove(HealthObject.size() - 1); }
 					while (XObject.size() < TypeObject.size()) {
+						System.out.println("Something Went Wrong");
 						TypeObject.remove(TypeObject.size() - 1); }
 				//Edge Reaction Bounce
 					if (TypeObject.get(objectCount) == 1.0 || TypeObject.get(objectCount) == 4.0 || TypeObject.get(objectCount) == 6.0 || TypeObject.get(objectCount) == 7.0 || TypeObject.get(objectCount) == 8.0) {
@@ -382,11 +424,12 @@ public class Flatspace {
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
+								HealthObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
 									TypeObject.set(objectCount, 3.0);
 									VXObject.set(objectCount, 0.00001);
 									VYObject.set(objectCount, 0.0);
-									GameScore = GameScore + 5; 
+									GameScore = GameScore + 5;
 									LoopRunning = false; } }
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
@@ -404,6 +447,7 @@ public class Flatspace {
 							VXObject.remove(objectCount);
 							VYObject.remove(objectCount);
 							TypeObject.remove(objectCount);
+							HealthObject.remove(objectCount);
 							LoopRunning = false; }
 						StdDraw.setPenColor(255, 255, 0);
 						if (objectCount != XObject.size() && LoopRunning) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
@@ -431,23 +475,34 @@ public class Flatspace {
 								VXObject.remove(objectCount);
 								VYObject.remove(objectCount);
 								TypeObject.remove(objectCount);
+								HealthObject.remove(objectCount);
 								LoopRunning = false; } } }
 				//For Large Square
 					else if (TypeObject.get(objectCount) == 4.0) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
 							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .08 &&
-									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .08 && rng.nextInt(4) == 2) {
-								XObject.remove(DetectCount);
-								YObject.remove(DetectCount);
-								VXObject.remove(DetectCount);
-								VYObject.remove(DetectCount);
-								TypeObject.remove(DetectCount);
-								if (XObject.size() != objectCount) {
-									TypeObject.set(objectCount, 3.0);
-									VXObject.set(objectCount, 0.00001);
-									VYObject.set(objectCount, 0.00001);
-									GameScore = GameScore + 50; 
-									LoopRunning = false; } }
+									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .08) {
+								if (HealthObject.get(objectCount) > 1) {
+									HealthObject.set(objectCount, HealthObject.get(objectCount) - 1);
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount); }
+								else if (HealthObject.get(objectCount) == 1) {
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount);
+									if (XObject.size() != objectCount) {
+										TypeObject.set(objectCount, 3.0);
+										VXObject.set(objectCount, 0.00001);
+										VYObject.set(objectCount, 0.00001);
+										GameScore = GameScore + 50; 
+										LoopRunning = false; } } }
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.setPenColor(StdDraw.WHITE);
@@ -466,40 +521,77 @@ public class Flatspace {
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
+								HealthObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
 									XObject.remove(objectCount);
 									YObject.remove(objectCount);
 									VXObject.remove(objectCount);
 									VYObject.remove(objectCount);
 									TypeObject.remove(objectCount);
+									HealthObject.remove(objectCount);
 									if (!PFireRate) {
 										PFireRate = true;
 										PTimer = 0; }
 									LoopRunning = false; } }
 								else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "PFireRate.jpg", .08, .08); } }
-				//For Star
-					else if (TypeObject.get(objectCount) == 6.0) {
+					else if (TypeObject.get(objectCount) == 5.1) {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
-							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+							if (DetectCount != TypeObject.size() && objectCount != XObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								Invincible = true;
 								XObject.remove(DetectCount);
 								YObject.remove(DetectCount);
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
+								HealthObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
-									for (int i = 1; i != 5; i++) {
-										XObject.add(XObject.get(objectCount));
-										YObject.add(YObject.get(objectCount));
-										VXObject.add(.015 * Math.cos((rng.nextDouble() * 6.28) - 3.14));
-										VYObject.add(.015 * Math.sin((rng.nextDouble() * 6.28) - 3.14));
-										TypeObject.add(7.0); }
-									GameScore = GameScore + 75;
-									VXObject.set(objectCount, 0.00001);
-									VYObject.set(objectCount, 0.00002);
-									TypeObject.set(objectCount, 3.0);
+									XObject.remove(objectCount);
+									YObject.remove(objectCount);
+									VXObject.remove(objectCount);
+									VYObject.remove(objectCount);
+									TypeObject.remove(objectCount);
+									HealthObject.remove(objectCount);
+									if (!PFField) {
+										PFField = true;
+										PTimer = 0; }
 									LoopRunning = false; } }
+								else {DetectCount++;} }
+						if (LoopRunning && XObject.size() != objectCount) { StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "PFField.jpg", .08, .08); } }
+				//For Star
+					else if (TypeObject.get(objectCount) == 6.0) {
+						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
+									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
+								if (HealthObject.get(objectCount) > 1) {
+									HealthObject.set(objectCount, HealthObject.get(objectCount) - 1);
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount); }
+								else if (HealthObject.get(objectCount) == 1) {
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount);
+									if (XObject.size() != objectCount) {
+										for (int i = 1; i != 5; i++) {
+											XObject.add(XObject.get(objectCount));
+											YObject.add(YObject.get(objectCount));
+											VXObject.add(.015 * Math.cos((rng.nextDouble() * 6.28) - 3.14));
+											VYObject.add(.015 * Math.sin((rng.nextDouble() * 6.28) - 3.14));
+											TypeObject.add(7.0);
+											HealthObject.add(1.0); }
+										GameScore = GameScore + 75;
+										VXObject.set(objectCount, 0.00001);
+										VYObject.set(objectCount, 0.00002);
+										TypeObject.set(objectCount, 3.0);
+										LoopRunning = false; } } }
 								else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileStar, .08, .08, rotation);
@@ -516,6 +608,7 @@ public class Flatspace {
 								VXObject.remove(DetectCount);
 								VYObject.remove(DetectCount);
 								TypeObject.remove(DetectCount);
+								HealthObject.remove(DetectCount);
 								if (XObject.size() != objectCount) {
 									GameScore = GameScore + 20;
 									VXObject.set(objectCount, 0.00001);
@@ -534,18 +627,28 @@ public class Flatspace {
 						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
 							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .04 &&
 									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .04) {
-								XObject.remove(DetectCount);
-								YObject.remove(DetectCount);
-								VXObject.remove(DetectCount);
-								VYObject.remove(DetectCount);
-								TypeObject.remove(DetectCount);
-								if (XObject.size() != objectCount) {
-									GameScore = GameScore + 75;
-									VXObject.set(objectCount, 0.00001);
-									VYObject.set(objectCount, 0.00002);
-									TypeObject.set(objectCount, 3.0);
-									LoopRunning = false; } }
-								else {DetectCount++;} }
+								if (HealthObject.get(objectCount) > 1) {
+									HealthObject.set(objectCount, HealthObject.get(objectCount) - 1);
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount); }
+								else if (HealthObject.get(objectCount) == 1) {
+									XObject.remove(DetectCount);
+									YObject.remove(DetectCount);
+									VXObject.remove(DetectCount);
+									VYObject.remove(DetectCount);
+									TypeObject.remove(DetectCount);
+									HealthObject.remove(DetectCount);
+									if (XObject.size() != objectCount) {
+										GameScore = GameScore + 75;
+										VXObject.set(objectCount, 0.00001);
+										VYObject.set(objectCount, 0.00002);
+										TypeObject.set(objectCount, 3.0);
+										LoopRunning = false; } } }
+							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileNPCs, .08, .08, NpcRotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
@@ -559,6 +662,7 @@ public class Flatspace {
 							VXObject.remove(objectCount);
 							VYObject.remove(objectCount);
 							TypeObject.remove(objectCount);
+							HealthObject.remove(objectCount);
 							LoopRunning = false; }
 						StdDraw.setPenColor(StdDraw.GREEN);
 						if (objectCount != XObject.size()) {
@@ -566,14 +670,42 @@ public class Flatspace {
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
 								GameRunning = false;
 								LoopRunning = false; } } }
-				//Add New Types Here
-					else if (TypeObject.get(objectCount) == 10.0) { }
+				//The Wall Blocks
+					else if (TypeObject.get(objectCount) == 10.0) {
+						while (LoopRunning && DetectCount != XObject.size() && objectCount != XObject.size()) {
+							if (DetectCount != TypeObject.size() && TypeObject.get(DetectCount) == 2.0 && Math.abs(XObject.get(DetectCount)-XObject.get(objectCount)) < .14 &&
+									Math.abs(YObject.get(DetectCount)-YObject.get(objectCount)) < .14 && rng.nextInt(4) == 2) {
+								XObject.remove(DetectCount);
+								YObject.remove(DetectCount);
+								VXObject.remove(DetectCount);
+								VYObject.remove(DetectCount);
+								TypeObject.remove(DetectCount);
+								HealthObject.remove(DetectCount);
+								if (XObject.size() != objectCount) {
+									TypeObject.set(objectCount, 3.0);
+									VXObject.set(objectCount, 0.00001);
+									VYObject.set(objectCount, 0.00003);
+									GameScore = GameScore + 20; 
+									LoopRunning = false; } }
+							else {DetectCount++;} }
+						if (LoopRunning && XObject.size() != objectCount) {
+							StdDraw.setPenColor(StdDraw.MAGENTA);
+							StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .1);
+							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .14 && Math.abs(YObject.get(objectCount)-YShip) < .14) {
+								GameRunning = false;
+								LoopRunning = false; } }
+					//More Types Here
+				}
 					DetectCount = 0;
 					if (LoopRunning) objectCount++;
 					else LoopRunning = true; }
 			//PowerUp Timer
-				if (PFireRate && PTimer < 50) PTimer++;
-				if (PTimer > 48) PFireRate = false;
+				if (PFField && PTimer < 150) PTimer++;
+				if (PFField && PTimer > 148) {
+					PFField = false;
+					Invincible = ReqInvincible; }
+				if (PFireRate && PTimer < 75) PTimer++;
+				if (PFireRate && PTimer > 73) PFireRate = false;
 			//Score HUD
 				StdDraw.picture(0, -1, "Footer2.png", 2.2, .5);
 				StdDraw.setPenColor(StdDraw.BLACK);
@@ -588,7 +720,8 @@ public class Flatspace {
 			//Invincible Hotkey = F2
 				if (StdDraw.isKeyPressed(113) && KeyTimeout > 30 && Debugging) {
 					if (Invincible) {Invincible = false; KeyTimeout = 0;}
-					else {Invincible = true; KeyTimeout = 0;} }
+					else {Invincible = true; KeyTimeout = 0;}
+					ReqInvincible = Invincible;	}
 				StdDraw.setPenColor(StdDraw.WHITE);
 				if (Invincible) StdDraw.textRight(1, .9, "Invincible");
 				if (StdDraw.isKeyPressed(27) && KeyTimeout > 30) {KeyTimeout = 0; GameRunning = false;}
@@ -599,20 +732,22 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .9, "ENT: " + XObject.size());
 					StdDraw.textLeft(-1, .8, "FPS: " + FPS);
 					StdDraw.textLeft(-1, .7, "VSY: " + VsyncCount);
-					StdDraw.textRight(1, 1, "Beta Wilsonis 1.2");}
+					StdDraw.textRight(1, 1, "Beta Wilsonis 1.3");}
+				else {
+					StdDraw.setPenColor(StdDraw.GREEN);
+					StdDraw.text(0, 1, FPS + " FPS"); }
 			//Shows and Clears Background For Next Frame
 				StdDraw.show(0);
 				if (GameRunning) {
 					StdDraw.setPenColor(0, 0, 0);
-					//StdDraw.filledSquare(0, 0, 2);
-					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
-					}
+					StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5); }
 				if (XObject.size() > 150) {
 					XObject.remove(0);
 					YObject.remove(0);
 					VXObject.remove(0);
 					VYObject.remove(0);
-					TypeObject.remove(0); }
+					TypeObject.remove(0);
+					HealthObject.remove(0); }
 				if (FPS != 0 && FPS < 30 && VsyncCount != 1 && VSync) {VsyncCount--; FPS = 0;}
 				if (!VSync && FPS < 25) FastMode = true;
 				if (VSync && VsyncCount == 1 && FPS < 15 && FPS != 0) FastMode = true;
