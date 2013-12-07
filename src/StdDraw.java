@@ -1,153 +1,98 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.*;
-import java.net.*;
-import java.util.LinkedList;
-import java.util.TreeSet;
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.awt.*; import java.awt.event.*; import java.awt.geom.*; import java.awt.image.*; import java.io.*; import java.net.*; import java.util.LinkedList; import java.util.TreeSet; import javax.imageio.ImageIO; import javax.swing.*;
 public final class StdDraw implements ActionListener, MouseListener, MouseMotionListener, KeyListener {
-    public static final Color BLACK      = Color.BLACK;
-    public static final Color BLUE       = Color.BLUE;
-    public static final Color CYAN       = Color.CYAN;
-    public static final Color DARK_GRAY  = Color.DARK_GRAY;
-    public static final Color GRAY       = Color.GRAY;
-    public static final Color GREEN      = Color.GREEN;
-    public static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
-    public static final Color MAGENTA    = Color.MAGENTA;
-    public static final Color ORANGE     = Color.ORANGE;
-    public static final Color PINK       = Color.PINK;
-    public static final Color RED        = Color.RED;
-    public static final Color WHITE      = Color.WHITE;
-    public static final Color YELLOW     = Color.YELLOW;
-    public static final Color BOOK_BLUE       = new Color(  9,  90, 166);
-    public static final Color BOOK_LIGHT_BLUE = new Color(103, 198, 243);
-    private static final Color DEFAULT_PEN_COLOR   = BLACK;
-    private static final Color DEFAULT_CLEAR_COLOR = WHITE;
-    private static Color penColor;
-    private static final int DEFAULT_SIZE = 700;
-    private static int width  = 700;
-    private static int height = 700;
-    // default pen radius
-    private static final double DEFAULT_PEN_RADIUS = 0.002;
-    // current pen radius
-    private static double penRadius;
-    // show we draw immediately or wait until next show?
-    private static boolean defer = false;
-    // boundary of drawing canvas, 5% border
-    private static final double BORDER = 0.05;
-    private static final double DEFAULT_XMIN = 0.0;
-    private static final double DEFAULT_XMAX = 1.0;
-    private static final double DEFAULT_YMIN = 0.0;
-    private static final double DEFAULT_YMAX = 1.0;
-    private static double xmin, ymin, xmax, ymax;
-    // for synchronization
-    private static Object mouseLock = new Object();
-    private static Object keyLock = new Object();
-    // default font
-    private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 16);
-    // current font
-    private static Font font;
-    // double buffered graphics
-    private static BufferedImage offscreenImage, onscreenImage;
-    private static Graphics2D offscreen, onscreen;
-    // singleton for callbacks: avoids generation of extra .class files
-    private static StdDraw std = new StdDraw();
-    // the frame for drawing to the screen
-    static JFrame frame;
-    // mouse state
-    private static boolean mousePressed = false;
-    private static double mouseX = 0;
-    private static double mouseY = 0;
-    // queue of typed key characters
-    private static LinkedList<Character> keysTyped = new LinkedList<Character>();
-    // set of key codes currently pressed down
-    static TreeSet<Integer> keysDown = new TreeSet<Integer>();
-    // singleton pattern: client can't instantiate
-    private StdDraw() { }
-    // static initializer
-    static { init(); }
-    /**
-     * Set the window size to the default size 512-by-512 pixels.
-     */
-    public static void setCanvasSize() {
-        setCanvasSize(DEFAULT_SIZE, DEFAULT_SIZE);
-    }
-    /**
-     * Set the window size to w-by-h pixels.
-     *
-     * @param w the width as a number of pixels
-     * @param h the height as a number of pixels
-     * @throws a IllegalArgumentException if the width or height is 0 or negative
-     */
-    public static void setCanvasSize(int w, int h) {
-        if (w < 1 || h < 1) throw new IllegalArgumentException("width and height must be positive");
-        width = w;
-        height = h;
-        init();
-    }
-    // init
-    private static void init() {
-        if (frame != null) frame.setVisible(false);
-        frame = new JFrame();
-        offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        offscreen = offscreenImage.createGraphics();
-        onscreen  = onscreenImage.createGraphics();
-        setXscale();
-        setYscale();
-        offscreen.setColor(DEFAULT_CLEAR_COLOR);
-        offscreen.fillRect(0, 0, width, height);
-        setPenColor();
-        setPenRadius();
-        setFont();
-        clear();
-        // add antialiasing
-        RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                  RenderingHints.VALUE_ANTIALIAS_ON);
-        hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        offscreen.addRenderingHints(hints);
-        // frame stuff
-        ImageIcon icon = new ImageIcon(onscreenImage);
-        JLabel draw = new JLabel(icon);
-        draw.addMouseListener(std);
-        draw.addMouseMotionListener(std);
-        frame.setContentPane(draw);
-        frame.addKeyListener(std);    // JLabel cannot get keyboard focus
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
-        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
-        frame.setTitle("Flatspace");
-        frame.setJMenuBar(createMenuBar());
-        frame.pack();
-        frame.requestFocusInWindow();
-        frame.setVisible(true);
-    }
-    // create the menu bar (changed to private)
-    private static JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Screenshot");
-        menuBar.add(menu);
-        JMenuItem menuItem1 = new JMenuItem(" Save Screenshot   ");
-        menuItem1.addActionListener(std);
-        menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        menu.add(menuItem1);
-        return menuBar;
-    }
-   /*************************************************************************
-    *  User and screen coordinate systems
-    *************************************************************************/
-    /**
-     * Set the x-scale to be the default (between 0.0 and 1.0).
-     */
-    public static void setXscale() { setXscale(DEFAULT_XMIN, DEFAULT_XMAX); }
-    /**
-     * Set the y-scale to be the default (between 0.0 and 1.0).
-     */
-    public static void setYscale() { setYscale(DEFAULT_YMIN, DEFAULT_YMAX); }
+	public static final Color BLACK = Color.BLACK;
+	public static final Color BLUE = Color.BLUE;
+	public static final Color CYAN = Color.CYAN;
+	public static final Color DARK_GRAY = Color.DARK_GRAY;
+	public static final Color GRAY = Color.GRAY;
+	public static final Color GREEN = Color.GREEN;
+	public static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
+	public static final Color MAGENTA = Color.MAGENTA;
+	public static final Color ORANGE = Color.ORANGE;
+	public static final Color PINK = Color.PINK;
+	public static final Color RED = Color.RED;
+	public static final Color WHITE = Color.WHITE;
+	public static final Color YELLOW = Color.YELLOW;
+	public static final Color BOOK_BLUE = new Color(9, 90, 166);
+	public static final Color BOOK_LIGHT_BLUE = new Color(103, 198, 243);
+	private static final Color DEFAULT_PEN_COLOR = BLACK;
+	private static final Color DEFAULT_CLEAR_COLOR = WHITE;
+	private static Color penColor;
+	private static final int DEFAULT_SIZE = 700;
+	private static int width = 700;
+	private static int height = 700;
+	private static final double DEFAULT_PEN_RADIUS = 0.002;
+	private static double penRadius;
+	private static boolean defer = false;
+	private static final double BORDER = 0.05;
+	private static final double DEFAULT_XMIN = 0.0;
+	private static final double DEFAULT_XMAX = 1.0;
+	private static final double DEFAULT_YMIN = 0.0;
+	private static final double DEFAULT_YMAX = 1.0;
+	private static double xmin, ymin, xmax, ymax;
+	private static Object mouseLock = new Object();
+	private static Object keyLock = new Object();
+	private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 16);
+	private static Font font;
+	private static BufferedImage offscreenImage, onscreenImage;
+	private static Graphics2D offscreen, onscreen;
+	private static StdDraw std = new StdDraw();
+	static JFrame frame;
+	private static boolean mousePressed = false;
+	private static double mouseX = 0;
+	private static double mouseY = 0;
+	private static LinkedList<Character> keysTyped = new LinkedList<Character>();
+	static TreeSet<Integer> keysDown = new TreeSet<Integer>();
+	private StdDraw() { }
+	static {init();}
+	public static void setCanvasSize() {setCanvasSize(DEFAULT_SIZE, DEFAULT_SIZE);}
+	public static void setCanvasSize(int w, int h) {
+		if (w < 1 || h < 1) throw new IllegalArgumentException("width and height must be positive");
+		width = w;
+		height = h;
+		init(); }
+	private static void init() {
+		if (frame != null) frame.setVisible(false);
+		frame = new JFrame();
+		offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		offscreen = offscreenImage.createGraphics();
+		onscreen  = onscreenImage.createGraphics();
+		setXscale();
+		setYscale();
+		offscreen.setColor(DEFAULT_CLEAR_COLOR);
+		offscreen.fillRect(0, 0, width, height);
+		setPenColor();
+		setPenRadius();
+		setFont();
+		clear();
+		RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		offscreen.addRenderingHints(hints);
+		ImageIcon icon = new ImageIcon(onscreenImage);
+		JLabel draw = new JLabel(icon);
+		draw.addMouseListener(std);
+		draw.addMouseMotionListener(std);
+		frame.setContentPane(draw);
+		frame.addKeyListener(std);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle("FlatSpace");
+		frame.pack();
+		frame.requestFocusInWindow();
+		frame.setVisible(true); }
+/* private static JMenuBar createMenuBar() {
+JMenuBar menuBar = new JMenuBar();
+JMenu menu = new JMenu("Screenshot");
+menuBar.add(menu);
+JMenuItem menuItem1 = new JMenuItem(" Save Screenshot   ");
+menuItem1.addActionListener(std);
+menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+menu.add(menuItem1);
+return menuBar; }*/
+//coords system
+	public static void setXscale() { setXscale(DEFAULT_XMIN, DEFAULT_XMAX); }
+	public static void setYscale() { setYscale(DEFAULT_YMIN, DEFAULT_YMAX); }
     /**
      * Set the x-scale (a 10% border is added to the values)
      * @param min the minimum value of the x-scale
@@ -743,138 +688,63 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
             WritableRaster newRaster;
             newRaster = raster.createWritableChild(0, 0, width, height, 0, 0, new int[] {0, 1, 2});
             DirectColorModel cm = (DirectColorModel) onscreenImage.getColorModel();
-            DirectColorModel newCM = new DirectColorModel(cm.getPixelSize(),
-                                                          cm.getRedMask(),
-                                                          cm.getGreenMask(),
-                                                          cm.getBlueMask());
-            BufferedImage rgbBuffer = new BufferedImage(newCM, newRaster, false,  null);
-            try { ImageIO.write(rgbBuffer, suffix, file); }
-            catch (IOException e) { e.printStackTrace(); }
-        }
-        else {
-            System.out.println("Invalid image file type: " + suffix);
-        }
-    }
-    /**
-     * This method cannot be called directly.
-     */
-    public void actionPerformed(ActionEvent e) {
-        FileDialog chooser = new FileDialog(StdDraw.frame, "Use a .png or .jpg extension", FileDialog.SAVE);
-        chooser.setVisible(true);
-        String filename = chooser.getFile();
-        if (filename != null) {
-            StdDraw.save(chooser.getDirectory() + File.separator + chooser.getFile());
-        }
-    }
-   /*************************************************************************
-    *  Mouse interactions.
-    *************************************************************************/
-    /**
-     * Is the mouse being pressed?
-     * @return true or false
-     */
-    public static boolean mousePressed() {
-        synchronized (mouseLock) {
-            return mousePressed;
-        }
-    }
-    /**
-     * What is the x-coordinate of the mouse?
-     * @return the value of the x-coordinate of the mouse
-     */
-    public static double mouseX() {
-        synchronized (mouseLock) {
-            return mouseX;
-        }
-    }
-    /**
-     * What is the y-coordinate of the mouse?
-     * @return the value of the y-coordinate of the mouse
-     */
-    public static double mouseY() {
-        synchronized (mouseLock) {
-            return mouseY;
-        }
-    }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseClicked(MouseEvent e) { }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseEntered(MouseEvent e) { }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseExited(MouseEvent e) { }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mousePressed(MouseEvent e) {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-            mousePressed = true;
-        }
-    }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseReleased(MouseEvent e) {
-        synchronized (mouseLock) {
-            mousePressed = false;
-        }
-    }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseDragged(MouseEvent e)  {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-        }
-    }
-    /**
-     * This method cannot be called directly.
-     */
-    public void mouseMoved(MouseEvent e) {
-        synchronized (mouseLock) {
-            mouseX = StdDraw.userX(e.getX());
-            mouseY = StdDraw.userY(e.getY());
-        }
-    }
-   /*************************************************************************
-    *  Keyboard interactions.
-    *************************************************************************/
-    /**
-     * Has the user typed a key?
-     * @return true if the user has typed a key, false otherwise
-     */
-    public static boolean hasNextKeyTyped() {
-        synchronized (keyLock) {
-            return !keysTyped.isEmpty();
-        }
-    }
-    /**
-     * What is the next key that was typed by the user? This method returns
-     * a Unicode character corresponding to the key typed (such as 'a' or 'A').
-     * It cannot identify action keys (such as F1
-     * and arrow keys) or modifier keys (such as control).
-     * @return the next Unicode key typed
-     */
-    public static char nextKeyTyped() {
-        synchronized (keyLock) {
-            return keysTyped.removeLast(); } }
-    public static boolean isKeyPressed(int keycode) {
-        synchronized (keyLock) {
-            return keysDown.contains(keycode); } }
-    public void keyTyped(KeyEvent e) {
-        synchronized (keyLock) {
-            keysTyped.addFirst(e.getKeyChar()); } }
-    public void keyPressed(KeyEvent e) {
-        synchronized (keyLock) {
-            keysDown.add(e.getKeyCode()); } }
-    public void keyReleased(KeyEvent e) {
-        synchronized (keyLock) {
-            keysDown.remove(e.getKeyCode()); } } }
+			DirectColorModel newCM = new DirectColorModel(cm.getPixelSize(), cm.getRedMask(), cm.getGreenMask(), cm.getBlueMask());
+			BufferedImage rgbBuffer = new BufferedImage(newCM, newRaster, false,  null);
+			try { ImageIO.write(rgbBuffer, suffix, file); }
+			catch (IOException e) { e.printStackTrace(); } }
+		else {System.out.println("Invalid image file type: " + suffix); } }
+	public void actionPerformed(ActionEvent e) {
+		FileDialog chooser = new FileDialog(StdDraw.frame, "Use a .png or .jpg extension", FileDialog.SAVE);
+		chooser.setVisible(true);
+		String filename = chooser.getFile();
+		if (filename != null) {
+			StdDraw.save(chooser.getDirectory() + File.separator + chooser.getFile()); } }
+//Mouse Stuff
+	public static boolean mousePressed() {
+		synchronized (mouseLock) {
+			return mousePressed; } }
+	public static double mouseX() {
+		synchronized (mouseLock) {
+			return mouseX; } }
+	public static double mouseY() {
+		synchronized (mouseLock) {
+			return mouseY; } }
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	public void mousePressed(MouseEvent e) {
+		synchronized (mouseLock) {
+			mouseX = StdDraw.userX(e.getX());
+			mouseY = StdDraw.userY(e.getY());
+			mousePressed = true; } }
+	public void mouseReleased(MouseEvent e) {
+		synchronized (mouseLock) {
+			mousePressed = false; } }
+	public void mouseDragged(MouseEvent e)  {
+		synchronized (mouseLock) {
+			mouseX = StdDraw.userX(e.getX());
+			mouseY = StdDraw.userY(e.getY()); } }
+	public void mouseMoved(MouseEvent e) {
+		synchronized (mouseLock) {
+			mouseX = StdDraw.userX(e.getX());
+			mouseY = StdDraw.userY(e.getY()); } }
+//Keyboard Interactions
+	public static boolean hasNextKeyTyped() {
+		synchronized (keyLock) {
+			return !keysTyped.isEmpty(); } }
+	public static char nextKeyTyped() {
+		synchronized (keyLock) {
+			return keysTyped.removeLast(); } }
+	public static boolean isKeyPressed(int keycode) {
+		synchronized (keyLock) {
+			return keysDown.contains(keycode); } }
+	public void keyTyped(KeyEvent e) {
+		synchronized (keyLock) {
+			keysTyped.addFirst(e.getKeyChar()); } }
+	public void keyPressed(KeyEvent e) {
+		synchronized (keyLock) {
+			keysDown.add(e.getKeyCode()); } }
+	public void keyReleased(KeyEvent e) {
+		synchronized (keyLock) {
+			keysDown.remove(e.getKeyCode()); } }
+	public static void main(String args[]) {System.err.print("You cannot run this program by itself."); } }
