@@ -12,7 +12,9 @@ DONE
  
 TODO
  - Multiple Line High Score List
- - Add more power-ups
- - Easter Eggs and Cheat Codes
- - Rewrite to be Object Oriented
- - Rewrite a "Lite" version (as small as possible)
+ - Add even more power-ups
+ - Easter Eggs or Cheat Codes
+ - Idea: Rewrite to be Object Oriented
+ - Idea: Rewrite a "Lite" version (as small as possible)
+ - Snakes
+ - More Things with the wall
