@@ -1,7 +1,8 @@
 FlatSpace
 =========
 
-Download a runnable version! https://dl.dropboxusercontent.com/u/25808307/FlatSpace%20B1.1.zip
+Download a runnable version! FlatSpace Beta Wilsonis 1.1:
+https://dl.dropboxusercontent.com/u/25808307/FlatSpace%20B1.1.zip
 Just extract the ZIP and double click the Flatspace.jar!
 
 Sources:
@@ -20,8 +21,12 @@ Meet the Objects:
  - Large Box: Larger version of the Standard Box. Takes a random amount of hits. Worth 50 points.
  - Stars: Only take one hit but split into 5 fragments in random directions. Worth 75 points.
  - Star Fragments: Only take one hit but move extremely fast and in erratic patterns. Worth 20 points.
- - "NPC" (Green Ship): Spawns at higher levels and shoots bullets in random directions. Worth 75 points.
- - PowerUp: currently only one, which increases your firing speed. These will always be blue icons.
+ - NPC Enemy: Spawns at higher levels and shoots bullets in random directions. Worth 75 points.
+ - "The Wall": Spawns every 5 levels after the first 15 levels. Each box worth 20 points.
+
+Meet the Powerups:
+ - Fire Rate: Increases your firing speed to every second tick instead of every seventh
+ - Force Field: a blue circle around your ship that prevents you from getting hit while active
 
 Options Menu (F5):
  - VSync: Turns on/off the beta FPS controlling system that is built in. Eventually you won't be able to turn it off.
