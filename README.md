@@ -27,6 +27,7 @@ Meet the Objects:
 Meet the Powerups:
  - Fire Rate: Increases your firing speed to every second tick instead of every seventh
  - Force Field: a blue circle around your ship that prevents you from getting hit while active
+ - Nuke: Clears everything from the screen but you receive no points
 
 Options Menu (F5):
  - VSync: Turns on/off the beta FPS controlling system that is built in. Eventually you won't be able to turn it off.
