@@ -1,4 +1,4 @@
-//Menu Class for FlatSpace Beta Wilsonis 1.3 
+//Menu Class for FlatSpace Beta Wilsonis 1.5 
 import javax.swing.*; import javax.swing.border.Border; import java.awt.*; import java.awt.event.*; import java.io.*;
 public class Menu extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -7,10 +7,9 @@ public class Menu extends JFrame {
 		JPanel controlPanel = new JPanel(new GridLayout(5,1));
 		Border gap = BorderFactory.createEmptyBorder(5,5,5,5);
 		controlPanel.setBorder(gap);
-		VSyncButton = new JButton("");
-		VSyncButton.addActionListener(new VSyncButtonListener());
-		VSyncButton.setEnabled(false);
-		controlPanel.add(VSyncButton);
+		GridButton = new JButton("");
+		GridButton.addActionListener(new GridButtonListener());
+		controlPanel.add(GridButton);
 		DiskDriveButton = new JButton("");
 		DiskDriveButton.addActionListener(new DiskDriveButtonListener());
 		controlPanel.add(DiskDriveButton);
@@ -26,22 +25,22 @@ public class Menu extends JFrame {
 		controlPanel.add(ResetHSButton);
 		setContentPane(controlPanel);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); }
-	private JButton VSyncButton, DiskDriveButton, TexturesButton, DebugButton, ResetHSButton;
+	private JButton GridButton, DiskDriveButton, TexturesButton, DebugButton, ResetHSButton;
 	public void InitializeButtons() {
-		if (Flatspace.VSync) VSyncButton.setText("VSync Enabled");
-		else VSyncButton.setText("VSync Disabled");
+		if (Flatspace.ShowGrid) GridButton.setText("Grid Enabled (Recommended)");
+		else GridButton.setText("Grid Disabled");
 		if (Flatspace.OpenCD) DiskDriveButton.setText("CD Drive Opens");
 		else DiskDriveButton.setText("CD Drive Doesn't Open");
 		if (Flatspace.ItemsEnabled) TexturesButton.setText("Textures Enabled");
 		else TexturesButton.setText("Textures Disabled"); }
-	private class VSyncButtonListener implements ActionListener {
+	private class GridButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			if (Flatspace.VSync) {
-				Flatspace.VSync = false;
-				VSyncButton.setText("VSync Disabled");}
+			if (Flatspace.ShowGrid) {
+				Flatspace.ShowGrid = false;
+				GridButton.setText("Grid Disabled");}
 			else {
-				Flatspace.VSync = true;
-				VSyncButton.setText("VSync Enabled"); } } }
+				Flatspace.ShowGrid = true;
+				GridButton.setText("Grid Enabled (Recommended)"); } } }
 	private class DiskDriveButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			if (Flatspace.OpenCD) {
