@@ -1,5 +1,4 @@
-//FlatSpace Beta Wilsonis 1.4: Added the nuke powerup which clears everything from the screen. Added a sentence at the end that tells you how you died.
-//Added an option to turn on/off the grid background. Began working on a Secret Function... Where GabeN is glitchy as ever
+//FlatSpace Beta Wilsonis 1.5: The amazing secret GabeN easter egg is amazing! Completely fixed and running now. The FatSpace easter egg has been re-mapped to another key.
 import java.awt.*; import java.io.*; import java.util.*;
 public class Flatspace {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
@@ -28,7 +27,10 @@ public class Flatspace {
 		while (true) {
 			if (StdDraw.mousePressed()) break;
 			if (StdDraw.isKeyPressed(39)) {
-				//SecretFunction();
+				SecretFunction2();
+				StdDraw.picture(0, 0, "Splash1.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
+			if (StdDraw.isKeyPressed(37)) {
 				StdDraw.picture(0, 0, "GFatSpace.jpg", 2.2, 2.2);
 				FileSBox = "Texture9/FSSquare.png";
 				FileLBox = "Texture9/FSSquare.png";
@@ -82,7 +84,7 @@ public class Flatspace {
 				StdDraw.filledSquare(0, 0, 2);
 				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
 				StdDraw.show(0);
-				Thread.sleep(100);}
+				Thread.sleep(100); }
 		//Inventory
 			if (StdDraw.isKeyPressed(114)) {
 				StdDraw.setPenColor(StdDraw.WHITE);
@@ -733,9 +735,7 @@ public class Flatspace {
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .14 && Math.abs(YObject.get(objectCount)-YShip) < .14) {
 								ObjectKill = "You were killed by The Wall.";
 								GameRunning = false;
-								LoopRunning = false; } }
-					//More Types Here
-				}
+								LoopRunning = false; } } }
 					DetectCount = 0;
 					if (LoopRunning) objectCount++;
 					else LoopRunning = true; }
@@ -772,7 +772,7 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .9, "ENT: " + XObject.size());
 					StdDraw.textLeft(-1, .8, "FPS: " + FPS);
 					StdDraw.textLeft(-1, .7, "VSY: " + VsyncCount);
-					StdDraw.textRight(1, 1, "Beta Wilsonis 1.4");}
+					StdDraw.textRight(1, 1, "Beta Wilsonis 1.5");}
 				else {
 					StdDraw.setPenColor(StdDraw.GREEN);
 					StdDraw.text(0, 1, FPS + " FPS"); }
@@ -866,59 +866,106 @@ public class Flatspace {
 				StdDraw.text(0, -.85, "PRESS ESC TO CONTINUE");
 				StdDraw.show(0); } }
 		AllRunning = false; } } }
-	protected static void SecretFunction() {
-		ArrayList<double[]> Deals = new ArrayList<double[]>();
-		ArrayList<double[]> Bullets = new ArrayList<double[]>();
-		StdDraw.setPenColor(StdDraw.BLACK);
-		StdDraw.filledSquare(0, 0, 2);
-		double XShip = (Math.random() * 2) - 1, YShip = (Math.random() * 2) - 1, ShipAngle, XMouse, YMouse, GabenAngle = 0;
-		int N = 1, LongTimer = 0;
+	public static void SecretFunction2() throws InterruptedException {
+		ArrayList<Double> XObject = new ArrayList<Double>();
+		ArrayList<Double> YObject = new ArrayList<Double>();
+		ArrayList<Double> VXObject = new ArrayList<Double>();
+		ArrayList<Double> VYObject = new ArrayList<Double>();
+		ArrayList<Double> DegObject = new ArrayList<Double>();
+		ArrayList<Double> TypeObject = new ArrayList<Double>();
+		int LongCount = 0, N = 1, score = 0, SaleCounter = 0;
 		double[] rx = new double[N];
 		double[] ry = new double[N];
 		double[] vx = new double[N];
 		double[] vy = new double[N];
-		double dt = 0.5, mass = 1.0, drag = 1.5, attractionStrength = 0.01;
-		while (true) {
-		//cursor
+		double dt = 0.5, mass = 1.0, drag = 1.5, attractionStrength = 0.01, XShip = (Math.random() * 2) - 1, YShip = (Math.random() * 2) - 1;
+		double XMouse, YMouse, ShipAngle = 0;
+		boolean GameRunning = true, SteamSale = false;
+		while (GameRunning) {
+			StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
 			XMouse = StdDraw.mouseX();
 			YMouse = StdDraw.mouseY();
 			StdDraw.setPenColor(StdDraw.RED);
-			StdDraw.text(0, 1, Bullets.size() + " Bullets, " + Deals.size() + " Deals");
 			StdDraw.circle(XMouse, YMouse, .03);
+			StdDraw.setPenColor(StdDraw.YELLOW);
 			ShipAngle = Math.toDegrees(Math.atan((YMouse - YShip)/(XMouse - XShip))) - 90;
 			if (StdDraw.mouseX() < XShip) ShipAngle = ShipAngle - 180;
 			if (ShipAngle > -360 && ShipAngle < 360) StdDraw.picture(XShip, YShip, "FSTriangle.png", .06, .06, ShipAngle);
-			
 			if (StdDraw.mousePressed()) {
-				XShip = XShip + (XMouse - XShip) / 50; 
+				XShip = XShip + (XMouse - XShip) / 50;
 				YShip = YShip + (YMouse - YShip) / 50; }
-		//spawn bullets
-			if (LongTimer%15 == 0) {Bullets.add(new double[] {XShip, YShip, .04 * Math.cos(Math.toRadians(ShipAngle + 90)), .04 * Math.sin(Math.toRadians(ShipAngle + 90)), 0.0}); }
-		//spawn deals
-			GabenAngle = Math.toDegrees(Math.atan((YShip - ry[0])/(XShip - rx[0]))) - 90;
-			if (XShip < rx[0]) GabenAngle = GabenAngle - 180;
-			if (LongTimer%20 == 0) Deals.add(new double[] {rx[0], ry[0], .04 * Math.cos(Math.toRadians(GabenAngle + 90)), .04 * Math.sin(Math.toRadians(GabenAngle + 90)), GabenAngle});
-		//new array system
+			if (Math.floor(Math.random() * 100) == 80 || StdDraw.isKeyPressed(27)) {
+				SteamSale = true;
+				SaleCounter = 0; }
+			if (LongCount%7 == 0) {
+				XObject.add(XShip);
+				YObject.add(YShip);
+				VXObject.add(.04 * Math.cos(Math.toRadians(ShipAngle + 90)));
+				VYObject.add(.04 * Math.sin(Math.toRadians(ShipAngle + 90)));
+				DegObject.add(0.0);
+				TypeObject.add(1.0); }
+			if (LongCount%30 == 0) {
+				XObject.add(rx[0]);
+				YObject.add(ry[0]);
+				double GabenAngle = Math.toDegrees(Math.atan((YShip - ry[0])/(XShip - rx[0]))) - 90;
+				if (XShip < rx[0]) GabenAngle = GabenAngle - 180;
+				VXObject.add(.04 * Math.cos(Math.toRadians(GabenAngle + 90)));
+				VYObject.add(.04 * Math.sin(Math.toRadians(GabenAngle + 90)));
+				DegObject.add(GabenAngle);
+				TypeObject.add(2.0); }
+			if (SteamSale && LongCount%1 == 0) {
+				XObject.add(rx[0]);
+				YObject.add(ry[0]);
+				double GabenAngle = Math.random() * 360;
+				VXObject.add(.04 * Math.cos(Math.toRadians(GabenAngle + 90)));
+				VYObject.add(.04 * Math.sin(Math.toRadians(GabenAngle + 90)));
+				DegObject.add(GabenAngle);
+				TypeObject.add(2.0); }
 			int objectCount = 0, detectCount = 0;
-			while (objectCount < Deals.size()) {
-				Deals.set(objectCount, new double[] {Deals.get(objectCount)[0] + Deals.get(objectCount)[2], Deals.get(objectCount)[1] + Deals.get(objectCount)[3], Deals.get(objectCount)[2], Deals.get(objectCount)[3], Deals.get(objectCount)[4]});
-				StdDraw.picture(Deals.get(objectCount)[0], Deals.get(objectCount)[1], "FSSquare.png", .08, .08, Deals.get(objectCount)[4]);
-				if (Deals.get(objectCount)[0] < -1.1 || Deals.get(objectCount)[0] > 1.1 || Deals.get(objectCount)[1] < -1.1 || Deals.get(objectCount)[1] > 1.1) Deals.remove(objectCount);
-				else objectCount++; }
-			objectCount = 0;
-			while (objectCount < Bullets.size() ) {
-				Bullets.set(objectCount, new double[] {Bullets.get(objectCount)[0] + Bullets.get(objectCount)[2], Bullets.get(objectCount)[1] + Bullets.get(objectCount)[3], Bullets.get(objectCount)[2], Bullets.get(objectCount)[3], 0.0});
+			while (objectCount < XObject.size()) {
+				boolean foundSomething = false;
 				detectCount = 0;
-				while (detectCount < Deals.size() && objectCount < Deals.size() && detectCount < Bullets.size() && objectCount < Bullets.size()) {
-					if (Math.abs(Bullets.get(objectCount)[0] - Deals.get(detectCount)[0]) < .1 && Math.abs(Bullets.get(objectCount)[1] - Deals.get(detectCount)[1]) < .1) {
-						System.out.println("Trigger");
-						Bullets.remove(objectCount);
-						Deals.remove(detectCount); }
-					else detectCount++; }
-				StdDraw.setPenColor(StdDraw.YELLOW);
-				StdDraw.filledCircle(Bullets.get(objectCount)[0], Bullets.get(objectCount)[1], .01);
-				objectCount++; }
-		//attraction modules
+				XObject.set(objectCount, XObject.get(objectCount) + VXObject.get(objectCount));
+				YObject.set(objectCount, YObject.get(objectCount) + VYObject.get(objectCount));
+				if (TypeObject.get(objectCount) == 1.0) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01);
+				if (TypeObject.get(objectCount) == 2.0) {
+					if (Math.abs(XObject.get(objectCount) - XShip) < .04 && Math.abs(YObject.get(objectCount) - YShip) < .04) GameRunning = false;
+					while (detectCount < XObject.size()) {
+						if (TypeObject.get(detectCount) == 1.0) {
+							if (objectCount < XObject.size() && detectCount < XObject.size() && Math.abs(XObject.get(objectCount) - XObject.get(detectCount)) < .04 && Math.abs(YObject.get(objectCount) - YObject.get(detectCount)) < .04) {
+								XObject.remove(objectCount); 
+								YObject.remove(objectCount); 
+								VXObject.remove(objectCount); 
+								VYObject.remove(objectCount); 
+								DegObject.remove(objectCount); 
+								TypeObject.remove(objectCount); 
+								if (XObject.size() <= 1) {
+									XObject.remove(detectCount - 1);
+									YObject.remove(detectCount - 1);
+									VXObject.remove(detectCount - 1);
+									VYObject.remove(detectCount - 1);
+									DegObject.remove(detectCount - 1);
+									TypeObject.remove(detectCount - 1); }
+								foundSomething = true;
+								score++; } }
+						detectCount++; }
+					if (!foundSomething) StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Texture3/FSSquare.png", .2, .2, DegObject.get(objectCount) - 90); }
+				if (objectCount < XObject.size()) {
+					if (XObject.get(objectCount) > 1.1 || XObject.get(objectCount) < -1.1 || YObject.get(objectCount) > 1.1 || YObject.get(objectCount) < -1.1) {
+						XObject.remove(objectCount);
+						YObject.remove(objectCount);
+						VXObject.remove(objectCount);
+						VYObject.remove(objectCount);
+						DegObject.remove(objectCount);
+						TypeObject.remove(objectCount);
+						foundSomething = true; } }
+				if (!foundSomething) objectCount++; }
+			StdDraw.text(0, 1, score + " Games Purchased");
+			if (SteamSale && SaleCounter < 50) {
+				SaleCounter++;
+				StdDraw.text(0, .9, "STEAM SALE!"); }
+			else if (SteamSale) SteamSale = false;
+			if (Math.abs(rx[0] - XShip) < .25 && Math.abs(ry[0] - YShip) < .25) GameRunning = false;
 			double[] fx = new double[N];
 			double[] fy = new double[N];
 			double dx = XShip - rx[0];
@@ -931,12 +978,13 @@ public class Flatspace {
 			vy[0] += fy[0] * dt / mass;
 			rx[0] += vx[0] * dt;
 			ry[0] += vy[0] * dt;
-			StdDraw.picture(rx[0], ry[0], "GabeN.jpg", .5, .5);
-		//postframe
+			StdDraw.picture(rx[0], ry[0], "GabeNewell.png", .5, .5);
 			StdDraw.show(0);
-			try {Thread.sleep(15); }
-			catch (InterruptedException e) {e.printStackTrace(); }
-			StdDraw.setPenColor(StdDraw.BLACK);
-			StdDraw.filledSquare(0, 0, 2);
-			LongTimer++;
-		} } }
+			Thread.sleep(15);
+			LongCount++; }
+		double GabenSize = .5;
+		Thread.sleep(1000);
+		while (GabenSize < 5) {
+			GabenSize = GabenSize + .05;
+			StdDraw.picture(rx[0], ry[0], "GabeNewell.png", GabenSize, GabenSize);
+			StdDraw.show(0); } } }
