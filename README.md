@@ -1,8 +1,8 @@
 FlatSpace
 =========
 
-Download a runnable version! FlatSpace Beta Wilsonis 1.3:
-https://dl.dropboxusercontent.com/u/25808307/FlatSpaceB1.3.zip
+Download a runnable version! FlatSpace Beta Wilsonis 1.6 with Christmas DLC:
+https://dl.dropboxusercontent.com/u/25808307/FlatSpace%20B%201.6.zip
 Just extract the ZIP and double click the Flatspace.jar!
 
 Sources:
