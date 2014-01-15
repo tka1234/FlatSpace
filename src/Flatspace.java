@@ -1,6 +1,6 @@
-//FlatSpace Beta Wilsonis 1.5: The amazing secret GabeN easter egg is amazing! Completely fixed and running now. The FatSpace easter egg has been re-mapped to another key.
-import java.awt.*; import java.io.*; import java.util.*;
-public class Flatspace {
+//FlatSpace Beta Wilsonis 1.6: Now with Christmas DLC!!!!!!!!! Only $2.99!
+import java.awt.*; import java.io.*; import java.net.URI; import java.net.URISyntaxException; import java.util.*;
+public class ChristmasVersion {
 	public static ArrayList<Double> XObject = new ArrayList<Double>();
 	public static ArrayList<Double> YObject = new ArrayList<Double>();
 	public static ArrayList<Double> VXObject = new ArrayList<Double>();
@@ -11,7 +11,7 @@ public class Flatspace {
 	public static ArrayList<String> ItemNames = new ArrayList<String>();
 	public static boolean OpenCD, VSync = true, ItemsEnabled, Debugging, ShowGrid;
 	public static int TextureChosen = 1;
-	public static void main(String args[]) throws InterruptedException, FileNotFoundException {
+	public static void main(String args[]) throws InterruptedException, IOException, URISyntaxException {
 		Random rng = new Random();
 		StdDraw.setXscale(-1.0, 1.0);
 		StdDraw.setYscale(-1.0, 1.0);
@@ -50,13 +50,25 @@ public class Flatspace {
 		ItemsEnabled = OptionsData.nextBoolean();
 		Debugging = OptionsData.nextBoolean();
 		OptionsData.close();
+	//Dlc Owned?
+		Scanner DlcData = new Scanner(new File("DLCPurchase.dat"));
+		boolean DlcOwned = DlcData.nextBoolean();
+		DlcData.close();
+		if (DlcOwned) {
+			TextureChosen = 10;
+			FileSBox = "Texture10/FSSquare.png";
+			FileLBox = "Texture10/FSSquare.png";
+			FileStar = "Texture10/FSStar.png";
+			FileFrag = "Texture10/FSFrag.png";
+			FileNPCs = "Texture10/FSNpc.png";
+			FileCurs = "Texture10/FSTriangle.png"; }
 	//Game Loop! Here we go!
 		while (true) {
 		Thread.sleep(50);
 		boolean FirstRunning = true, AllRunning = true;
 		File inFile;
 		Scanner in;
-		StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+		StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 		StdDraw.show(0);
 		while (FirstRunning) {
 		//Start Game
@@ -82,7 +94,7 @@ public class Flatspace {
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 				StdDraw.show(0);
 				Thread.sleep(100); }
 		//Inventory
@@ -98,11 +110,12 @@ public class Flatspace {
 					while (!StdDraw.isKeyPressed(27)) {}
 					StdDraw.setPenColor(StdDraw.BLACK);
 					StdDraw.filledSquare(0, 0, 2);
-					StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+					StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 					StdDraw.show(0); }
 				else {
 					StdDraw.picture(0, 0, "GInventory.jpg", 2.2, 2.2);
-					StdDraw.text(0, -1, "Current Texture: #" + TextureChosen);
+					if (TextureChosen == 10) StdDraw.text(0, -1, "Current Texture: Christmas DLC");
+					else StdDraw.text(0, -1, "Current Texture: #" + TextureChosen);
 					StdDraw.show(0);
 					boolean WaitLooping = true;
 					while (WaitLooping) {
@@ -187,10 +200,10 @@ public class Flatspace {
 							FileCurs = "Texture9/FSTriangle.png";
 							TextureChosen = 9;
 							WaitLooping = false; }
-						if (StdDraw.isKeyPressed(27)) {WaitLooping = false;} }
+						if (StdDraw.isKeyPressed(27)) WaitLooping = false; }
 					StdDraw.setPenColor(StdDraw.BLACK);
 					StdDraw.filledSquare(0, 0, 2);
-					StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+					StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 					StdDraw.show(0);
 					Thread.sleep(100); } }
 		//How To Play
@@ -201,7 +214,7 @@ public class Flatspace {
 				while (!StdDraw.isKeyPressed(27)) {}
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 				StdDraw.show(0);
 				Thread.sleep(100); }
 		//Options
@@ -226,7 +239,72 @@ public class Flatspace {
 				OptionsSave.close();
 				StdDraw.setPenColor(StdDraw.BLACK);
 				StdDraw.filledSquare(0, 0, 2);
-				StdDraw.picture(0, 0, "Splash2.jpg", 2.2, 2.2);
+				StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
+				StdDraw.show(0); }
+		//DLC
+			if (StdDraw.isKeyPressed(117)) {
+				StdDraw.picture(0, 0, "GDlcPage.jpg", 2.2, 2.2);
+				StdDraw.show(0);
+				boolean DlcLoopRunning = true;
+				while (DlcLoopRunning) {
+					if (StdDraw.isKeyPressed(27)) DlcLoopRunning = false;
+					else if (StdDraw.isKeyPressed(10) && !DlcOwned) {
+						StdDraw.setPenColor(StdDraw.BLACK);
+						StdDraw.filledSquare(0, 0, 2.0);
+						StdDraw.setPenColor(StdDraw.WHITE);
+						StdDraw.text(0, 0, "DLC Password:");
+						StdDraw.show(0);
+						if (Desktop.isDesktopSupported()) Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QQT7W6JH7SCSJ"));
+					//
+						boolean WordLoopRunning = true;
+						int keyValuePressed = 0;
+						while (WordLoopRunning) {
+							if (StdDraw.isKeyPressed(77) && keyValuePressed == 0) keyValuePressed++;
+							else if (StdDraw.isKeyPressed(65) && keyValuePressed == 1) keyValuePressed++;
+							else if (StdDraw.isKeyPressed(78) && keyValuePressed == 2) keyValuePressed++;
+							else if (StdDraw.isKeyPressed(85) && keyValuePressed == 3) keyValuePressed++;
+							else if (StdDraw.isKeyPressed(69) && keyValuePressed == 4) keyValuePressed++;
+							else if (StdDraw.isKeyPressed(76) && keyValuePressed == 5) {
+								keyValuePressed++;
+								WordLoopRunning = false; }
+							else if (StdDraw.isKeyPressed(27)) WordLoopRunning = false; }
+						if (keyValuePressed == 6) {
+							DlcOwned = true;
+							StdDraw.setPenColor(StdDraw.BLACK);
+							StdDraw.filledSquare(0, 0, 2.0);
+							StdDraw.setPenColor(StdDraw.WHITE);
+							StdDraw.text(0, 0, "You now own the DLC!");
+							StdDraw.show(0);
+							File outDLC = new File("DLCPurchase.dat");
+							PrintWriter DLCOutput = new PrintWriter(outDLC);
+							DLCOutput.print(DlcOwned);
+							outDLC.setReadOnly();
+							DLCOutput.close();
+							FileSBox = "Texture10/FSSquare.png";
+							FileLBox = "Texture10/FSSquare.png";
+							FileStar = "Texture10/FSStar.png";
+							FileFrag = "Texture10/FSFrag.png";
+							FileNPCs = "Texture10/FSNpc.png";
+							FileCurs = "Texture10/FSTriangle.png";
+							TextureChosen = 10;
+							Thread.sleep(3000); }
+						DlcLoopRunning = false; }
+					else if (StdDraw.isKeyPressed(10) && DlcOwned) {
+						StdDraw.setPenColor(StdDraw.BLACK);
+						StdDraw.filledSquare(0, 0, 2.0);
+						StdDraw.setPenColor(StdDraw.WHITE);
+						StdDraw.text(0, 0, "DLC Already Owned and Equipped");
+						StdDraw.show(0);
+						Thread.sleep(3000);
+						TextureChosen = 10;
+						FileSBox = "Texture10/FSSquare.png";
+						FileLBox = "Texture10/FSSquare.png";
+						FileStar = "Texture10/FSStar.png";
+						FileFrag = "Texture10/FSFrag.png";
+						FileNPCs = "Texture10/FSNpc.png";
+						FileCurs = "Texture10/FSTriangle.png";
+						DlcLoopRunning = false; } }
+				StdDraw.picture(0, 0, "GMenuDlc.jpg", 2.2, 2.2);
 				StdDraw.show(0); } }
 		while (AllRunning) {
 		//gets high score values
@@ -269,7 +347,8 @@ public class Flatspace {
 				ShipAngle = Math.toDegrees(Math.atan((YMouse - YShip)/(XMouse - XShip))) - 90;
 				if (StdDraw.mouseX() < XShip) ShipAngle = ShipAngle - 180;
 				if (ShipAngle > -360 && ShipAngle < 360 && TextureChosen == 1) StdDraw.picture(XShip, YShip, FileCurs, .06, .06, ShipAngle);
-				if (ShipAngle > -360 && ShipAngle < 360 && TextureChosen != 1) StdDraw.picture(XShip, YShip, FileCurs, .12, .12, ShipAngle);
+				if (ShipAngle > -360 && ShipAngle < 360 && TextureChosen == 10) StdDraw.picture(XShip, YShip, FileCurs, .12, .25, ShipAngle); //lol the size is Christmas...
+				if (ShipAngle > -360 && ShipAngle < 360 && TextureChosen != 1 && TextureChosen != 10) StdDraw.picture(XShip, YShip, FileCurs, .12, .12, ShipAngle);
 				if (StdDraw.mousePressed()) {XShip = XShip + (XMouse - XShip) / 50; YShip = YShip + (YMouse - YShip) / 50; }
 			//Creation of Bullets
 				if (GameLevel%3 == 0) BoxSpeed = ((GameLevel / 3) * .001) + .002;
@@ -449,7 +528,7 @@ public class Flatspace {
 							if (FastMode) StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .04);
 							else StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileSBox, .08, .08, rotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
-								ObjectKill = "You were killed by a small box.";
+								ObjectKill = "A small box hit you.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 				//For Bullets:
@@ -463,7 +542,8 @@ public class Flatspace {
 							HealthObject.remove(objectCount);
 							LoopRunning = false; }
 						StdDraw.setPenColor(255, 255, 0);
-						if (objectCount != XObject.size() && LoopRunning) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
+						if (objectCount != XObject.size() && LoopRunning && TextureChosen == 10) StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), "Texture10/FSPresent.png", .06, .06);
+						else if (objectCount != XObject.size() && LoopRunning) StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01); }
 				//For Explosion Entity
 					else if (TypeObject.get(objectCount) == 3.0) {
 						VXObject.set(objectCount, VXObject.get(objectCount) + 0.00001);
@@ -523,7 +603,7 @@ public class Flatspace {
 							if (FastMode) StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .08);
 							else StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileLBox, .16, .16, rotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .1 && Math.abs(YObject.get(objectCount)-YShip) < .1) {
-								ObjectKill = "You were killed by a large box.";
+								ObjectKill = "A large box hit you.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 				//For Fire Rate Powerup
@@ -633,7 +713,7 @@ public class Flatspace {
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileStar, .08, .08, rotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
-								ObjectKill = "You were killed by a star.";
+								ObjectKill = "You were hit by a star.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 				//Star Fragments
@@ -657,7 +737,7 @@ public class Flatspace {
 						if (LoopRunning && XObject.size() != objectCount) {
 							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileFrag, .05, .05, rotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
-								ObjectKill = "You were killed by a star fragment.";
+								ObjectKill = "You were hit by a star fragment.";
 								GameRunning = false;
 								LoopRunning = false; } } }	
 				//NPC
@@ -689,9 +769,10 @@ public class Flatspace {
 										LoopRunning = false; } } }
 							else {DetectCount++;} }
 						if (LoopRunning && XObject.size() != objectCount) {
-							StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileNPCs, .08, .08, NpcRotation);
+							if (TextureChosen == 10) StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileNPCs, .16, .16, NpcRotation);
+							else StdDraw.picture(XObject.get(objectCount), YObject.get(objectCount), FileNPCs, .08, .08, NpcRotation);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .07 && Math.abs(YObject.get(objectCount)-YShip) < .07) {
-								ObjectKill = "You were killed by an enemy.";
+								ObjectKill = "An enemy ran into you.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 				//Bullets from NPC
@@ -708,7 +789,7 @@ public class Flatspace {
 						if (objectCount != XObject.size()) {
 							StdDraw.filledCircle(XObject.get(objectCount), YObject.get(objectCount), .01);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .04 && Math.abs(YObject.get(objectCount)-YShip) < .04) {
-								ObjectKill = "You were killed by an enemy's laser.";
+								ObjectKill = "An enemy's laser hit you.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 				//The Wall Blocks
@@ -733,7 +814,7 @@ public class Flatspace {
 							StdDraw.setPenColor(StdDraw.MAGENTA);
 							StdDraw.square(XObject.get(objectCount), YObject.get(objectCount), .1);
 							if (!Invincible && Math.abs(XObject.get(objectCount)-XShip) < .14 && Math.abs(YObject.get(objectCount)-YShip) < .14) {
-								ObjectKill = "You were killed by The Wall.";
+								ObjectKill = "The Wall hit you.";
 								GameRunning = false;
 								LoopRunning = false; } } }
 					DetectCount = 0;
@@ -772,7 +853,7 @@ public class Flatspace {
 					StdDraw.textLeft(-1, .9, "ENT: " + XObject.size());
 					StdDraw.textLeft(-1, .8, "FPS: " + FPS);
 					StdDraw.textLeft(-1, .7, "VSY: " + VsyncCount);
-					StdDraw.textRight(1, 1, "Beta Wilsonis 1.5");}
+					StdDraw.textRight(1, 1, "Beta Wilsonis 1.6");}
 				else {
 					StdDraw.setPenColor(StdDraw.GREEN);
 					StdDraw.text(0, 1, FPS + " FPS"); }
@@ -780,8 +861,10 @@ public class Flatspace {
 				StdDraw.show(0);
 				if (GameRunning) {
 					StdDraw.setPenColor(0, 0, 0);
-					if (ShowGrid) StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
-					else StdDraw.filledSquare(0, 0, 2); }
+					if (TextureChosen == 10) StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
+					else {
+						if (ShowGrid) StdDraw.picture(0, 0, "Grid.jpg", 2.5, 2.5);
+						else StdDraw.filledSquare(0, 0, 2); } }
 				if (XObject.size() > 150) {
 					XObject.remove(0);
 					YObject.remove(0);
@@ -828,11 +911,11 @@ public class Flatspace {
 		out.close();
 	//HUD for Results
 		StdDraw.picture(0, 0, "GEndScreen.jpg", 2.2, 2.2);
-		StdDraw.setPenColor(StdDraw.WHITE);
-		StdDraw.text(0, 1, ObjectKill);
-		StdDraw.text(0, -.6, GameScore + " PTS, LVL " + GameLevel + ", " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC");
-		if (EndingSentence.equals("")) StdDraw.text(0, -.7, "BETTER LUCK NEXT TIME!");
-		StdDraw.text(0, -.7, " " + EndingSentence);
+		StdDraw.setPenColor(StdDraw.BLACK);
+		StdDraw.text(0, .65, ObjectKill);
+		StdDraw.text(0, -.7, GameScore + " PTS, LVL " + GameLevel + ", " + ((double) Math.round(((System.currentTimeMillis() - StartTime) / 1000) * 10) / 10) + " SEC");
+		if (EndingSentence.equals("")) StdDraw.text(0, -.8, "BETTER LUCK NEXT TIME!");
+		StdDraw.text(0, -.8, " " + EndingSentence);
 		StdDraw.show(0);
 		Thread.sleep(500);
 		if (OpenCD) {
@@ -849,7 +932,7 @@ public class Flatspace {
 				else if (CDMessageCounter%100 == 0 && !penColorSwitch) {
 					penColorSwitch = true;
 					StdDraw.setPenColor(StdDraw.MAGENTA); }
-				StdDraw.text(0, -.85, "INSERT 25 CENTS TO CONTINUE");
+				StdDraw.text(0, -.95, "INSERT 25 CENTS TO CONTINUE");
 				StdDraw.show(0); } }
 		else {
 			int CDMessageCounter = 0;
@@ -863,7 +946,7 @@ public class Flatspace {
 				else if (CDMessageCounter%100 == 0 && !penColorSwitch) {
 					penColorSwitch = true;
 					StdDraw.setPenColor(StdDraw.MAGENTA); }
-				StdDraw.text(0, -.85, "PRESS ESC TO CONTINUE");
+				StdDraw.text(0, -.95, "PRESS ESC TO CONTINUE");
 				StdDraw.show(0); } }
 		AllRunning = false; } } }
 	public static void SecretFunction2() throws InterruptedException {
